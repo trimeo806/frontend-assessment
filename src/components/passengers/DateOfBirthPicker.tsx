@@ -63,17 +63,20 @@ export function DateOfBirthPicker({ value, onChange, error }: Props) {
   const days   = Array.from({ length: maxDay }, (_, i) => i + 1)
 
   // Clamp day when month/year change reduce max days
-  function handleMonth(month: string) {
+  function handleMonth(month: string | null) {
+    if (!month) return
     const newMax  = daysInMonth(month, parts.year)
     const clipped = parts.day && parseInt(parts.day, 10) > newMax ? String(newMax) : parts.day
     update({ ...parts, month, day: clipped })
   }
 
-  function handleDay(day: string) {
+  function handleDay(day: string | null) {
+    if (!day) return
     update({ ...parts, day })
   }
 
-  function handleYear(year: string) {
+  function handleYear(year: string | null) {
+    if (!year) return
     const newMax  = daysInMonth(parts.month, year)
     const clipped = parts.day && parseInt(parts.day, 10) > newMax ? String(newMax) : parts.day
     update({ ...parts, year, day: clipped })
