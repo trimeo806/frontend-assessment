@@ -1,5 +1,5 @@
 "use client"
-import { useForm, FormProvider } from "react-hook-form"
+import { useForm, FormProvider, type Resolver } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useTransition } from "react"
 import { useTranslations } from "next-intl"
@@ -35,7 +35,7 @@ export function PassengerForm() {
 
   const paxCount = passengerIds.length
   const methods = useForm<PassengerFormValues>({
-    resolver: zodResolver(makePassengerFormSchema(requiresPassport)),
+    resolver: zodResolver(makePassengerFormSchema(requiresPassport)) as Resolver<PassengerFormValues>,
     defaultValues: {
       passengers: Array.from({ length: paxCount }, () => ({
         title: "mr" as const,

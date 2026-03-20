@@ -23,7 +23,7 @@ export function SortBar() {
     <div className="flex items-center gap-2">
       <ArrowUpDown className="h-4 w-4 text-muted-foreground shrink-0" />
       <span className="text-sm text-muted-foreground shrink-0">{t("sort.label")}</span>
-      <Select value={sortBy} onValueChange={setSortBy}>
+      <Select value={sortBy} onValueChange={(v) => { if (v !== null) setSortBy(v) }}>
         <SelectTrigger className="h-8 w-[130px] text-sm">
           <SelectValue>{currentLabel}</SelectValue>
         </SelectTrigger>
