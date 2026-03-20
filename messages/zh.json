@@ -51,6 +51,7 @@
     "priceRange": "价格范围",
     "priceUpTo": "价格：最高 {max}",
     "sort": {
+      "label": "排序方式",
       "cheapest": "最便宜",
       "fastest": "最快",
       "earliest": "最早"
@@ -70,7 +71,9 @@
     "noFlightsHint": "尝试调整筛选条件或搜索其他日期",
     "adjustFilters": "尝试调整筛选条件",
     "perPerson": "每人",
-    "pax": "位"
+    "pax": "位",
+    "errorHeading": "加载航班失败",
+    "errorDetail": "出现错误，请重试。"
   },
   "passengers": {
     "heading": "乘客信息",
@@ -120,7 +123,9 @@
     "booking": "预订中…",
     "offerExpiredTitle": "航班报价已过期",
     "offerExpiredDescription": "该航班已不再可用。请重新搜索以获取最新价格。",
-    "startNewSearch": "开始新搜索"
+    "startNewSearch": "开始新搜索",
+    "errorHeading": "出现错误",
+    "errorDetail": "请重试。"
   },
   "confirmation": {
     "confirmed": "预订已确认！",
@@ -139,7 +144,9 @@
     "passengers": "乘客",
     "unableToRetrieve": "无法获取预订",
     "unableToRetrieveDetail": "我们无法加载您的预订详情。请查看您的电子邮件以获取确认。",
-    "returnToSearch": "返回搜索"
+    "returnToSearch": "返回搜索",
+    "errorHeading": "加载确认页面失败",
+    "errorDetail": "出现错误，请重试。"
   },
   "stepper": {
     "search": "搜索",

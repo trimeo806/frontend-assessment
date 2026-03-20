@@ -18,6 +18,6 @@ export async function GET(req: Request) {
     return Response.json(places)
   } catch (err) {
     console.error("[places/suggestions]", err)
-    return Response.json({ error: String(err) }, { status: 500 })
+    return Response.json([], { status: 500 })
   }
 }

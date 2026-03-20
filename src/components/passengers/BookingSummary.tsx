@@ -12,10 +12,6 @@ export function BookingSummary() {
   const offer = useFlightStore((s) => s.selectedOffer)
   if (!offer) return null
 
-  const slice = offer.slices[0]
-  const first = slice.segments[0]
-  const last = slice.segments[slice.segments.length - 1]
-
   return (
     <m.aside
       className="w-80 shrink-0 bg-white rounded-xl border border-border p-4 h-fit sticky top-24"
@@ -25,28 +21,34 @@ export function BookingSummary() {
     >
       <p className="font-semibold text-base mb-4">{t("bookingSummary")}</p>
 
-      <div className="flex items-center gap-3 mb-4">
+      <div className="flex items-center gap-3 mb-3">
         <AirlineLogo iata={offer.owner.iata_code} url={offer.owner.logo_symbol_url} name={offer.owner.name} />
-        <div>
-          <p className="text-sm font-medium">{offer.owner.name}</p>
-          <p className="text-xs text-muted-foreground">{first.origin.iata_code} &rarr; {last.destination.iata_code}</p>
-        </div>
+        <p className="text-sm font-medium">{offer.owner.name}</p>
       </div>
 
-      <div className="text-sm space-y-1 text-secondary-foreground">
-        <div className="flex justify-between">
-          <span className="text-muted-foreground">{t("departure")}</span>
-          <span>{format(new Date(first.departing_at), "d MMM, HH:mm")}</span>
-        </div>
-        <div className="flex justify-between">
-          <span className="text-muted-foreground">{t("arrival")}</span>
-          <span>{format(new Date(last.arriving_at), "d MMM, HH:mm")}</span>
-        </div>
-        <div className="flex justify-between">
-          <span className="text-muted-foreground">{t("duration")}</span>
-          <span>{parseDuration(slice.duration)}</span>
-        </div>
-      </div>
+      {offer.slices.map((slice, i) => {
+        const first = slice.segments[0]
+        const last = slice.segments[slice.segments.length - 1]
+        return (
+          <div key={slice.id} className={`text-sm space-y-1 text-secondary-foreground${i > 0 ? " mt-3 pt-3 border-t border-border" : ""}`}>
+            <p className="text-xs text-muted-foreground">
+              {first.origin.iata_code} &rarr; {last.destination.iata_code}
+            </p>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">{t("departure")}</span>
+              <span>{format(new Date(first.departing_at), "d MMM, HH:mm")}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">{t("arrival")}</span>
+              <span>{format(new Date(last.arriving_at), "d MMM, HH:mm")}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">{t("duration")}</span>
+              <span>{parseDuration(slice.duration)}</span>
+            </div>
+          </div>
+        )
+      })}
 
       <Separator className="my-4" />
 

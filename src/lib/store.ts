@@ -3,6 +3,13 @@ import { create } from "zustand"
 import { persist, createJSONStorage } from "zustand/middleware"
 import type { SearchFormValues } from "@/lib/types/forms"
 import type { DuffelOffer } from "@/lib/types/duffel"
+import {
+  FLIGHT_STORE_KEY,
+  DEFAULT_PRICE_RANGE,
+  DEPARTURE_TIME_ALL,
+  STOP_FILTER,
+  SORT_BY,
+} from "@/lib/constants"
 
 interface Filters {
   stops:         "all" | "direct" | "1stop" | "2plus"
@@ -21,7 +28,7 @@ interface FlightStore {
 
   // ── Session only (not persisted) ───────────────────
   filters: Filters
-  sortBy:  "total_amount" | "total_duration" | "departure_time"
+  sortBy:  typeof SORT_BY[keyof typeof SORT_BY]
 
   // ── Actions ────────────────────────────────────────
   setSearch:        (params: SearchFormValues) => void
@@ -35,10 +42,10 @@ interface FlightStore {
 }
 
 const defaultFilters: Filters = {
-  stops:         "all",
+  stops:         STOP_FILTER.ALL,
   airlines:      [],
-  departureTime: [0, 23],
-  priceRange:    [0, 9999],
+  departureTime: DEPARTURE_TIME_ALL,
+  priceRange:    DEFAULT_PRICE_RANGE,
 }
 
 export const useFlightStore = create<FlightStore>()(
@@ -51,7 +58,7 @@ export const useFlightStore = create<FlightStore>()(
       selectedOffer: null,
       orderId: null,
       filters: defaultFilters,
-      sortBy: "total_amount",
+      sortBy: SORT_BY.TOTAL_AMOUNT,
 
       // Actions
       setSearch: (params) => set({ search: params }),
@@ -61,15 +68,15 @@ export const useFlightStore = create<FlightStore>()(
       setFilter: (filter) => set((s) => ({ filters: { ...s.filters, ...filter } })),
       setSortBy: (sort) => set({ sortBy: sort }),
       resetForNewSearch: () =>
-        set({ selectedOffer: null, orderId: null, filters: defaultFilters, sortBy: "total_amount" }),
+        set({ selectedOffer: null, orderId: null, filters: defaultFilters, sortBy: SORT_BY.TOTAL_AMOUNT }),
       resetAll: () =>
         set({
           search: null, offerRequestId: null, passengerIds: [], selectedOffer: null,
-          orderId: null, filters: defaultFilters, sortBy: "total_amount",
+          orderId: null, filters: defaultFilters, sortBy: SORT_BY.TOTAL_AMOUNT,
         }),
     }),
     {
-      name: "flight-store",
+      name: FLIGHT_STORE_KEY,
       storage: createJSONStorage(() =>
         typeof window !== "undefined" ? sessionStorage : localStorage
       ),

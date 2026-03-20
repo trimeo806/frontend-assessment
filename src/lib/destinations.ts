@@ -1,5 +1,13 @@
 import "server-only"
+import { unstable_cache } from "next/cache"
 import { duffelFetch } from "@/lib/duffel"
+import {
+  POPULAR_DESTINATIONS_COUNT,
+  POPULAR_DESTINATIONS_REVALIDATE_SECONDS,
+  POPULAR_DESTINATIONS_CHECK_ORIGIN,
+  POPULAR_DESTINATIONS_DAYS_AHEAD,
+  POPULAR_DESTINATIONS_CHECK_CABIN,
+} from "@/lib/constants"
 import type { DuffelListResponse, DuffelSingleResponse, DuffelCity } from "@/lib/types/duffel"
 
 export interface PopularDestination {
@@ -35,12 +43,12 @@ async function cheapestPrice(
         method: "POST",
         body: {
           data: {
-            cabin_class: "economy",
+            cabin_class: POPULAR_DESTINATIONS_CHECK_CABIN,
             slices: [
               {
-                origin: "LHR",
+                origin: POPULAR_DESTINATIONS_CHECK_ORIGIN,
                 destination: destinationIata,
-                departure_date: departureDateIn(30),
+                departure_date: departureDateIn(POPULAR_DESTINATIONS_DAYS_AHEAD),
               },
             ],
             passengers: [{ type: "adult" }],
@@ -61,9 +69,9 @@ async function cheapestPrice(
   }
 }
 
-export async function getPopularDestinations(): Promise<PopularDestination[]> {
+async function fetchPopularDestinations(): Promise<PopularDestination[]> {
   const citiesRes = await duffelFetch<DuffelListResponse<DuffelCity>>(
-    "/air/cities?limit=5"
+    `/air/cities?limit=${POPULAR_DESTINATIONS_COUNT}`
   )
 
   const results = await Promise.allSettled(
@@ -89,3 +97,9 @@ export async function getPopularDestinations(): Promise<PopularDestination[]> {
     )
     .map((r) => r.value)
 }
+
+export const getPopularDestinations = unstable_cache(
+  fetchPopularDestinations,
+  ["popular-destinations"],
+  { revalidate: POPULAR_DESTINATIONS_REVALIDATE_SECONDS }
+)

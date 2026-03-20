@@ -45,15 +45,15 @@ export function AirportCombobox({ placeholder, value, onChange, error }: Props) 
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger
           className={cn(
-            "inline-flex h-[56px] w-full items-center justify-start gap-2 rounded-lg border border-border bg-background px-3 text-base font-normal outline-none hover:bg-muted/50 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50",
+            "inline-flex h-[56px] w-full items-center justify-start gap-2 rounded-lg border border-border bg-background px-3 text-base font-normal outline-none hover:bg-muted/50 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 overflow-hidden",
             error ? "border-error" : ""
           )}
         >
           <MapPin className="h-4 w-4 text-primary shrink-0" />
           {value ? (
-            <span className="font-medium">{value.city} ({value.iata})</span>
+            <span className="font-medium truncate min-w-0">{value.city} ({value.iata})</span>
           ) : (
-            <span className="text-muted-foreground">{placeholder}</span>
+            <span className="text-muted-foreground truncate min-w-0">{placeholder}</span>
           )}
         </PopoverTrigger>
         <PopoverContent className="p-0 w-(--anchor-width)" align="start">

@@ -14,8 +14,16 @@ import { useFilteredOffers } from "./hooks/useFilteredOffers"
 import { usePrefersReducedMotion } from "@/lib/animations/hooks"
 import { listVariants, cardVariants } from "./FlightList.animations"
 import { Button } from "@/components/ui/button"
+import { ProgressStepper } from "@/components/shared/ProgressStepper"
 import { Loader2, CheckCircle2 } from "lucide-react"
 import type { DuffelOffer } from "@/lib/types/duffel"
+import {
+  RESULTS_PAGE_SIZE,
+  INFINITE_SCROLL_ROOT_MARGIN,
+  STOP_FILTER,
+  DEPARTURE_TIME_ALL,
+  DEFAULT_PRICE_RANGE,
+} from "@/lib/constants"
 
 interface Props { offerRequestId: string }
 
@@ -31,7 +39,7 @@ export function ResultsList({ offerRequestId }: Props) {
   const sentinelRef = useRef<HTMLDivElement>(null)
 
   const fetchOffers = useCallback(async (cursor?: string) => {
-    const url = `/api/flights/offers?orq=${offerRequestId}&limit=20${cursor ? `&after=${cursor}` : ""}`
+    const url = `/api/flights/offers?orq=${offerRequestId}&limit=${RESULTS_PAGE_SIZE}${cursor ? `&after=${cursor}` : ""}`
     const res = await fetch(url)
     if (!res.ok) throw new Error("Failed to load flights")
     return res.json()
@@ -57,13 +65,18 @@ export function ResultsList({ offerRequestId }: Props) {
       .finally(() => setLoading(false))
   }, [fetchOffers])
 
+  const [loadMoreError, setLoadMoreError] = useState<string | null>(null)
+
   const loadMore = useCallback(async () => {
     if (!after || loadingMore) return
     setLoadingMore(true)
+    setLoadMoreError(null)
     try {
       const data = await fetchOffers(after)
       setOffers((prev) => [...prev, ...(data.data ?? [])])
       setAfter(data.meta?.after ?? null)
+    } catch (e: unknown) {
+      setLoadMoreError(e instanceof Error ? e.message : "Failed to load more flights")
     } finally {
       setLoadingMore(false)
     }
@@ -76,7 +89,7 @@ export function ResultsList({ offerRequestId }: Props) {
 
     const observer = new IntersectionObserver(
       (entries) => { if (entries[0].isIntersecting) loadMore() },
-      { rootMargin: "200px" }
+      { rootMargin: INFINITE_SCROLL_ROOT_MARGIN }
     )
     observer.observe(sentinel)
     return () => observer.disconnect()
@@ -97,7 +110,11 @@ export function ResultsList({ offerRequestId }: Props) {
   return (
     <div className="min-h-screen flex flex-col bg-secondary">
       <StickyHeader />
-      <SortBar />
+      <div className="mx-auto w-full max-w-220 px-4 pt-3 pb-0">
+        <div className="rounded-xl bg-primary px-4 py-2.5 flex justify-center shadow-sm">
+          <ProgressStepper step={2} />
+        </div>
+      </div>
 
       <div className="flex-1 mx-auto w-full max-w-300 px-4 py-6 flex gap-6">
         {/* Desktop filter sidebar */}
@@ -107,10 +124,20 @@ export function ResultsList({ offerRequestId }: Props) {
 
         {/* Main content */}
         <div className="flex-1 space-y-3">
-          {/* Mobile filter trigger */}
-          <div className="flex items-center justify-between lg:hidden mb-2">
-            <p className="text-sm text-muted-foreground">{t("flightsCount", { count: filteredOffers.length })}</p>
-            <MobileFilterTrigger offers={offers} />
+          {/* Sort + filter row */}
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-3">
+              <p className="text-sm text-muted-foreground">{t("flightsCount", { count: filteredOffers.length })}</p>
+              <div className="hidden lg:block">
+                <SortBar />
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="lg:hidden">
+                <SortBar />
+              </div>
+              <MobileFilterTrigger offers={offers} />
+            </div>
           </div>
 
           {loading ? (
@@ -120,7 +147,7 @@ export function ResultsList({ offerRequestId }: Props) {
               <FlightCardSkeleton />
             </>
           ) : filteredOffers.length === 0 ? (
-            <EmptyState onReset={() => setFilter({ stops: "all", airlines: [], departureTime: [0, 23], priceRange: [0, 9999] })} />
+            <EmptyState onReset={() => setFilter({ stops: STOP_FILTER.ALL, airlines: [], departureTime: DEPARTURE_TIME_ALL, priceRange: DEFAULT_PRICE_RANGE })} />
           ) : (
             <>
               {reduced ? (
@@ -143,9 +170,14 @@ export function ResultsList({ offerRequestId }: Props) {
               )}
 
               {/* Sentinel — triggers load-more when visible; doubles as end indicator */}
-              <div ref={sentinelRef} className="flex justify-center py-6">
+              <div ref={sentinelRef} className="flex flex-col items-center py-6 gap-2">
                 {loadingMore ? (
                   <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+                ) : loadMoreError ? (
+                  <div className="flex flex-col items-center gap-2">
+                    <p className="text-sm text-error">{loadMoreError}</p>
+                    <Button variant="outline" size="sm" onClick={() => loadMore()}>{t("tryAgain")}</Button>
+                  </div>
                 ) : !after ? (
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <CheckCircle2 className="h-4 w-4" />

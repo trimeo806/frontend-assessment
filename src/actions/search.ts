@@ -8,7 +8,7 @@ interface SearchFormValues {
   destination: { iata: string; name: string; city: string }
   departDate: string
   returnDate?: string
-  tripType: "one_way" | "round_trip" | "multi_city"
+  tripType: "one_way" | "round_trip"
   cabinClass: "economy" | "premium_economy" | "business" | "first"
   passengers: { type: "adult" | "child" | "infant_without_seat"; count: number }[]
 }

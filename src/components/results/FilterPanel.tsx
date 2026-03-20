@@ -7,6 +7,15 @@ import { Slider } from "@/components/ui/slider"
 import { Label } from "@/components/ui/label"
 import type { DuffelOffer } from "@/lib/types/duffel"
 import { useMemo } from "react"
+import {
+  STOP_FILTER,
+  DEPARTURE_TIME_ALL,
+  DEPARTURE_TIME_MORNING,
+  DEPARTURE_TIME_AFTERNOON,
+  DEPARTURE_TIME_EVENING,
+  DEPARTURE_TIME_NIGHT,
+  DEFAULT_PRICE_RANGE,
+} from "@/lib/constants"
 
 interface Props { offers: DuffelOffer[] }
 
@@ -15,17 +24,17 @@ export function FilterPanel({ offers }: Props) {
   const { filters, setFilter } = useFlightStore()
 
   const STOP_OPTIONS = [
-    { value: "all",    label: t("any") },
-    { value: "direct", label: t("nonstop") },
-    { value: "1stop",  label: t("oneStop") },
-    { value: "2plus",  label: t("twoPlus") },
+    { value: STOP_FILTER.ALL,      label: t("any") },
+    { value: STOP_FILTER.DIRECT,   label: t("nonstop") },
+    { value: STOP_FILTER.ONE,      label: t("oneStop") },
+    { value: STOP_FILTER.TWO_PLUS, label: t("twoPlus") },
   ] as const
 
   const TIME_CHIPS = [
-    { label: t("morning"),   range: [6, 12]  as [number, number] },
-    { label: t("afternoon"), range: [12, 18] as [number, number] },
-    { label: t("evening"),   range: [18, 23] as [number, number] },
-    { label: t("night"),     range: [0, 6]   as [number, number] },
+    { label: t("morning"),   range: DEPARTURE_TIME_MORNING },
+    { label: t("afternoon"), range: DEPARTURE_TIME_AFTERNOON },
+    { label: t("evening"),   range: DEPARTURE_TIME_EVENING },
+    { label: t("night"),     range: DEPARTURE_TIME_NIGHT },
   ]
 
   const airlines = useMemo(() => {
@@ -35,7 +44,7 @@ export function FilterPanel({ offers }: Props) {
   }, [offers])
 
   const priceRange = useMemo(() => {
-    if (!offers.length) return [0, 9999] as [number, number]
+    if (!offers.length) return DEFAULT_PRICE_RANGE
     const prices = offers.map((o) => parseFloat(o.total_amount))
     return [Math.floor(Math.min(...prices)), Math.ceil(Math.max(...prices))] as [number, number]
   }, [offers])
@@ -122,7 +131,7 @@ export function FilterPanel({ offers }: Props) {
               <button
                 key={label}
                 type="button"
-                onClick={() => setFilter({ departureTime: active ? [0, 23] : range })}
+                onClick={() => setFilter({ departureTime: active ? DEPARTURE_TIME_ALL : range })}
                 className="time-chip"
                 data-active={active}
               >

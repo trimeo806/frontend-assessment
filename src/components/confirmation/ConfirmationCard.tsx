@@ -12,6 +12,7 @@ import { parseDuration } from "@/lib/utils"
 import { useFlightStore } from "@/lib/store"
 import { usePrefersReducedMotion } from "@/lib/animations/hooks"
 import type { DuffelOrder } from "@/lib/types/duffel"
+import { ROUTES } from "@/lib/constants"
 
 interface Props { order: DuffelOrder }
 
@@ -23,7 +24,7 @@ export function ConfirmationCard({ order }: Props) {
 
   const handleSearchAgain = () => {
     resetAll()
-    router.push("/")
+    router.push(ROUTES.HOME)
   }
 
   return (

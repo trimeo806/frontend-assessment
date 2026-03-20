@@ -1,7 +1,7 @@
 "use client"
 import { useForm, Controller, useWatch } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useTransition } from "react"
+import { useTransition, useEffect } from "react"
 import { useTranslations } from "next-intl"
 import { useRouter } from "@/navigation"
 import { toast } from "sonner"
@@ -15,7 +15,9 @@ import { DateRangePicker } from "./DateRangePicker"
 import { PassengerSelector } from "./PassengerSelector"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
-import { Loader2, Search } from "lucide-react"
+import { Loader2, Search, Plane, Calendar } from "lucide-react"
+import { format } from "date-fns"
+import { EVENT_PREFILL_DESTINATION, ROUTES } from "@/lib/constants"
 
 export function SearchForm() {
   const t = useTranslations("search")
@@ -36,6 +38,19 @@ export function SearchForm() {
   })
 
   const tripType = useWatch({ control: form.control, name: "tripType" })
+  const originWatch = useWatch({ control: form.control, name: "origin" })
+  const destinationWatch = useWatch({ control: form.control, name: "destination" })
+  const departDateWatch = useWatch({ control: form.control, name: "departDate" })
+  const returnDateWatch = useWatch({ control: form.control, name: "returnDate" })
+
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const dest = (e as CustomEvent<{ iata: string; name: string; city: string }>).detail
+      form.setValue("destination", dest, { shouldValidate: false, shouldDirty: false })
+    }
+    window.addEventListener(EVENT_PREFILL_DESTINATION, handler)
+    return () => window.removeEventListener(EVENT_PREFILL_DESTINATION, handler)
+  }, [form])
 
   const handleSwap = () => {
     const origin = form.getValues("origin")
@@ -57,7 +72,7 @@ export function SearchForm() {
         return
       }
       setOfferRequest(result.data.offerRequestId, result.data.passengerIds)
-      router.push(`/results?orq=${result.data.offerRequestId}`)
+      router.push(`${ROUTES.RESULTS}?orq=${result.data.offerRequestId}`)
     })
   }
 
@@ -71,9 +86,9 @@ export function SearchForm() {
         )}
       />
 
-      {/* Origin / Destination row */}
-      <div className="flex items-center gap-2">
-        <div className="flex-1">
+      {/* Origin / Destination row — stacks vertically on mobile, side-by-side on sm+ */}
+      <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+        <div className="flex-1 min-w-0">
           <Controller
             control={form.control}
             name="origin"
@@ -87,8 +102,10 @@ export function SearchForm() {
             )}
           />
         </div>
-        <SwapButton onSwap={handleSwap} />
-        <div className="flex-1">
+        <div className="flex justify-center sm:block">
+          <SwapButton onSwap={handleSwap} />
+        </div>
+        <div className="flex-1 min-w-0">
           <Controller
             control={form.control}
             name="destination"
@@ -175,6 +192,24 @@ export function SearchForm() {
           <PassengerSelector value={field.value} onChange={field.onChange} />
         )}
       />
+
+      {/* Trip summary strip — visible when route + date are selected */}
+      {originWatch?.iata && destinationWatch?.iata && departDateWatch && (
+        <div className="flex items-center gap-2.5 px-3.5 py-2 rounded-lg border border-primary/25 bg-primary/5 text-sm overflow-hidden min-w-0">
+          <Plane className="h-4 w-4 text-primary shrink-0" />
+          <span className="font-semibold text-secondary-foreground shrink-0">
+            {originWatch.iata} → {destinationWatch.iata}
+          </span>
+          <span className="text-muted-foreground shrink-0">·</span>
+          <span className="flex items-center gap-1 text-secondary-foreground min-w-0">
+            <Calendar className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+            <span className="truncate">
+              {format(new Date(departDateWatch), "EEE, d MMM")}
+              {returnDateWatch && ` — ${format(new Date(returnDateWatch), "EEE, d MMM")}`}
+            </span>
+          </span>
+        </div>
+      )}
 
       <Button
         type="submit"

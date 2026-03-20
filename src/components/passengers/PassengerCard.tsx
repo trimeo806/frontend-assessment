@@ -201,14 +201,18 @@ export function PassengerCard({ index, label, requiresPassport }: Props) {
               {/* Expiry date */}
               <div className="sm:col-span-2">
                 <Label className="text-xs mb-1.5 block">{t("passportExpiry")}</Label>
-                <Input
-                  {...register(`passengers.${index}.identity_document.expires_on`)}
-                  type="date"
-                  className="h-10"
+                <Controller
+                  control={control}
+                  name={`passengers.${index}.identity_document.expires_on`}
+                  render={({ field }) => (
+                    <DateOfBirthPicker
+                      value={field.value || ""}
+                      onChange={field.onChange}
+                      error={paxErrors?.identity_document?.expires_on?.message}
+                      direction="future"
+                    />
+                  )}
                 />
-                {paxErrors?.identity_document?.expires_on && (
-                  <p className="text-xs text-error mt-1">{paxErrors.identity_document.expires_on.message}</p>
-                )}
               </div>
             </>
           )}

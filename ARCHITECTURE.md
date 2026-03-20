@@ -283,8 +283,7 @@ export function RequireOfferRequest({ children }: { children: ReactNode }) {
 
 #### Infinite Scroll
 - **Pattern**: Results list grows as user scrolls (e.g., "load next 10 flights").
-- **Why avoided**: Pagination with "Load More" button is more predictable; infinite scroll causes performance degradation on long lists.
-- **Implementation**: Cursor-based pagination in `ResultsList` component.
+- **Implementation**: Cursor-based infinite scroll using `IntersectionObserver` in `ResultsList`. Results load automatically when the sentinel element becomes visible. A "Load More" button fallback is shown when there is a load-more error.
 
 #### Dark Patterns
 - **Pattern**: Hidden fees, forced opt-ins, obscured total price.
@@ -362,7 +361,7 @@ npm run lint         # Run ESLint
 
 Environment variables required:
 ```
-NEXT_PUBLIC_DUFFEL_API_KEY=<your-duffel-api-key>
+DUFFEL_API_KEY=<your-duffel-api-key>
 ```
 
 ---
@@ -402,7 +401,7 @@ src/
 │   ├── hooks/ (useFilteredOffers, useHydrated, etc.)
 │   ├── utils.ts (classNameMerger, cn(), etc.)
 │   └── destinations.ts (Popular destinations data)
-├── i18n/
+├── messages/
 │   ├── en.json
 │   ├── ms.json
 │   └── zh.json

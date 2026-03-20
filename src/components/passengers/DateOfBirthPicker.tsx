@@ -7,6 +7,7 @@ interface Props {
   value: string           // "yyyy-MM-dd" or ""
   onChange: (v: string) => void
   error?: string
+  direction?: "past" | "future"  // "past" = date of birth (default), "future" = expiry date
 }
 
 const MONTHS = [
@@ -41,7 +42,7 @@ function parseParts(value: string) {
   }
 }
 
-export function DateOfBirthPicker({ value, onChange, error }: Props) {
+export function DateOfBirthPicker({ value, onChange, error, direction = "past" }: Props) {
   // Local state so each part persists independently of the form value
   const [parts, setParts] = useState(() => parseParts(value))
 
@@ -57,7 +58,9 @@ export function DateOfBirthPicker({ value, onChange, error }: Props) {
   }
 
   const currentYear = new Date().getFullYear()
-  const years = Array.from({ length: currentYear - 1900 + 1 }, (_, i) => currentYear - i)
+  const years = direction === "future"
+    ? Array.from({ length: 21 }, (_, i) => currentYear + i)
+    : Array.from({ length: currentYear - 1900 + 1 }, (_, i) => currentYear - i)
 
   const maxDay = daysInMonth(parts.month, parts.year)
   const days   = Array.from({ length: maxDay }, (_, i) => i + 1)

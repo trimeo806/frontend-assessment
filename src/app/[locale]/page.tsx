@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server"
 import { SearchForm } from "@/components/search/SearchForm"
 import { PopularDestinationsGrid } from "@/components/search/PopularDestinationsGrid"
 import { AnimatedSection } from "@/components/shared/AnimatedSection"
+import { ProgressStepper } from "@/components/shared/ProgressStepper"
 import { getPopularDestinations } from "@/lib/destinations"
 
 export const metadata: Metadata = { title: "SkyBook \u2014 Find Cheap Flights" }
@@ -18,13 +19,16 @@ export default async function SearchPage() {
       <section className="bg-linear-to-b from-primary to-primary-dark py-12 px-4 sm:px-8">
         <div className="mx-auto max-w-220">
           <AnimatedSection delay={0}>
+            <div className="mb-6 flex justify-center">
+              <ProgressStepper step={1} />
+            </div>
             <div className="mb-8 text-center">
               <h1 className="text-4xl font-bold tracking-tight text-white">{t("search.heading")}</h1>
               <p className="mt-2 text-base text-white/80">{t("search.subheading")}</p>
             </div>
           </AnimatedSection>
           <AnimatedSection delay={0.1}>
-            <div className="w-full rounded-xl bg-white shadow-lg p-6">
+            <div id="search-form" className="w-full rounded-xl bg-white shadow-lg p-6">
               <SearchForm />
             </div>
           </AnimatedSection>

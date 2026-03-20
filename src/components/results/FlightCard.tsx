@@ -12,6 +12,7 @@ import { getOffer } from "@/actions/offers"
 import { useFlightStore } from "@/lib/store"
 import { parseDuration } from "@/lib/utils"
 import type { DuffelOffer } from "@/lib/types/duffel"
+import { ROUTES } from "@/lib/constants"
 
 interface Props { offer: DuffelOffer }
 
@@ -29,9 +30,12 @@ export function FlightCard({ offer }: Props) {
         return
       }
       setSelectedOffer(result.data)
-      router.push("/passengers")
+      router.push(ROUTES.PASSENGERS)
     })
   }
+
+  const paxCount = offer.passengers.length
+  const perPersonAmount = (parseFloat(offer.total_amount) / paxCount).toFixed(2)
 
   return (
     <div className="bg-white rounded-xl border border-border p-4 hover:shadow-md transition-shadow">
@@ -85,7 +89,7 @@ export function FlightCard({ offer }: Props) {
               {i === 0 && (
                 <div className="hidden sm:flex flex-col items-end text-right shrink-0 ml-2">
                   <p className="text-2xl font-bold text-secondary-foreground">
-                    {offer.total_currency} {parseFloat(offer.total_amount).toFixed(2)}
+                    {offer.total_currency} {perPersonAmount}
                   </p>
                   <p className="text-xs text-muted-foreground mb-2">{t("perPerson")}</p>
                   <Button
@@ -104,7 +108,7 @@ export function FlightCard({ offer }: Props) {
               <div className="flex sm:hidden items-center justify-between mt-3 pt-3 border-t border-border">
                 <div>
                   <p className="text-xl font-bold text-secondary-foreground">
-                    {offer.total_currency} {parseFloat(offer.total_amount).toFixed(2)}
+                    {offer.total_currency} {perPersonAmount}
                   </p>
                   <p className="text-xs text-muted-foreground">{t("perPerson")}</p>
                 </div>

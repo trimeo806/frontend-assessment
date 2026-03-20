@@ -8,9 +8,10 @@ import { toast } from "sonner"
 import { m } from "motion/react"
 import { Accordion } from "@/components/ui/accordion"
 import { Button } from "@/components/ui/button"
-import { passengerFormSchema, type PassengerFormValues } from "@/lib/types/forms"
+import { makePassengerFormSchema, type PassengerFormValues } from "@/lib/types/forms"
 import { createOrder } from "@/actions/booking"
 import { useFlightStore } from "@/lib/store"
+import { ROUTES } from "@/lib/constants"
 import { PassengerCard } from "./PassengerCard"
 import { usePrefersReducedMotion } from "@/lib/animations/hooks"
 import { stagger, duration, ease } from "@/lib/animations/tokens"
@@ -34,7 +35,7 @@ export function PassengerForm() {
 
   const paxCount = passengerIds.length
   const methods = useForm<PassengerFormValues>({
-    resolver: zodResolver(passengerFormSchema),
+    resolver: zodResolver(makePassengerFormSchema(requiresPassport)),
     defaultValues: {
       passengers: Array.from({ length: paxCount }, () => ({
         title: "mr" as const,
@@ -71,7 +72,7 @@ export function PassengerForm() {
         return
       }
       setOrderId(result.data.orderId)
-      router.push(`/confirmation/${result.data.orderId}`)
+      router.push(`${ROUTES.CONFIRMATION}/${result.data.orderId}`)
     })
   }
 

@@ -1,32 +1,38 @@
 "use client"
 import { useTranslations } from "next-intl"
 import { useFlightStore } from "@/lib/store"
-import { cn } from "@/lib/utils"
+import { SORT_BY } from "@/lib/constants"
+import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from "@/components/ui/select"
+import { ArrowUpDown } from "lucide-react"
 
 export function SortBar() {
   const t = useTranslations("results")
   const { sortBy, setSortBy } = useFlightStore()
 
   const TABS = [
-    { value: "total_amount",   label: t("sort.cheapest") },
-    { value: "total_duration", label: t("sort.fastest")  },
-    { value: "departure_time", label: t("sort.earliest") },
+    { value: SORT_BY.TOTAL_AMOUNT,   label: t("sort.cheapest") },
+    { value: SORT_BY.TOTAL_DURATION, label: t("sort.fastest")  },
+    { value: SORT_BY.DEPARTURE_TIME, label: t("sort.earliest") },
   ] as const
 
+  const currentLabel = TABS.find((tab) => tab.value === sortBy)?.label ?? sortBy
+
   return (
-    <div className="h-12 bg-primary flex items-end px-4 gap-6">
-      {TABS.map(({ value, label }) => (
-        <button
-          key={value}
-          onClick={() => setSortBy(value)}
-          className={cn(
-            "pb-2 text-sm transition-colors",
-            sortBy === value ? "sort-tab-active" : "sort-tab-inactive"
-          )}
-        >
-          {label}
-        </button>
-      ))}
+    <div className="flex items-center gap-2">
+      <ArrowUpDown className="h-4 w-4 text-muted-foreground shrink-0" />
+      <span className="text-sm text-muted-foreground shrink-0">{t("sort.label")}</span>
+      <Select value={sortBy} onValueChange={setSortBy}>
+        <SelectTrigger className="h-8 w-[130px] text-sm">
+          <SelectValue>{currentLabel}</SelectValue>
+        </SelectTrigger>
+        <SelectContent>
+          {TABS.map(({ value, label }) => (
+            <SelectItem key={value} value={value}>{label}</SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
     </div>
   )
 }

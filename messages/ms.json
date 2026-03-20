@@ -51,6 +51,7 @@
     "priceRange": "Julat harga",
     "priceUpTo": "Harga: sehingga {max}",
     "sort": {
+      "label": "Susun mengikut",
       "cheapest": "Termurah",
       "fastest": "Terpantas",
       "earliest": "Terawal"
@@ -70,7 +71,9 @@
     "noFlightsHint": "Cuba laraskan penapis atau cari tarikh lain",
     "adjustFilters": "Cuba laraskan penapis anda",
     "perPerson": "setiap orang",
-    "pax": "pnp"
+    "pax": "pnp",
+    "errorHeading": "Gagal memuatkan penerbangan",
+    "errorDetail": "Berlaku ralat. Sila cuba lagi."
   },
   "passengers": {
     "heading": "Maklumat penumpang",
@@ -120,7 +123,9 @@
     "booking": "Menempah…",
     "offerExpiredTitle": "Tawaran penerbangan tamat tempoh",
     "offerExpiredDescription": "Penerbangan ini tidak lagi tersedia. Sila cari semula untuk harga terkini.",
-    "startNewSearch": "Mulakan carian baru"
+    "startNewSearch": "Mulakan carian baru",
+    "errorHeading": "Berlaku ralat",
+    "errorDetail": "Sila cuba lagi."
   },
   "confirmation": {
     "confirmed": "Tempahan disahkan!",
@@ -139,7 +144,9 @@
     "passengers": "Penumpang",
     "unableToRetrieve": "Tidak dapat mendapatkan tempahan",
     "unableToRetrieveDetail": "Kami tidak dapat memuatkan butiran tempahan anda. Sila semak e-mel anda untuk pengesahan.",
-    "returnToSearch": "Kembali ke carian"
+    "returnToSearch": "Kembali ke carian",
+    "errorHeading": "Gagal memuatkan pengesahan",
+    "errorDetail": "Berlaku ralat. Sila cuba lagi."
   },
   "stepper": {
     "search": "Cari",

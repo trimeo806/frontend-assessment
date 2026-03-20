@@ -5,6 +5,7 @@ import { AlertCircle } from "lucide-react"
 import { m } from "motion/react"
 import { Button } from "@/components/ui/button"
 import { useFlightStore } from "@/lib/store"
+import { ROUTES } from "@/lib/constants"
 
 interface Props { message?: string }
 
@@ -24,7 +25,7 @@ export function ErrorCard({ message }: Props) {
       <p className="text-sm text-muted-foreground mb-6">
         {message ?? t("unableToRetrieveDetail")}
       </p>
-      <Button onClick={() => { resetAll(); router.push("/") }} variant="outline">
+      <Button onClick={() => { resetAll(); router.push(ROUTES.HOME) }} variant="outline">
         {t("returnToSearch")}
       </Button>
     </m.div>

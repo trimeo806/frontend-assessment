@@ -4,6 +4,14 @@ import { useTranslations } from "next-intl"
 import { usePrefersReducedMotion } from "@/lib/animations/hooks"
 import { stagger, duration, ease } from "@/lib/animations/tokens"
 import type { PopularDestination } from "@/lib/destinations"
+import { EVENT_PREFILL_DESTINATION } from "@/lib/constants"
+
+export function dispatchPrefillDestination(dest: { iata: string; name: string; city: string }) {
+  window.dispatchEvent(new CustomEvent(EVENT_PREFILL_DESTINATION, { detail: dest }))
+  const el = document.getElementById("search-form")
+  if (el) el.scrollIntoView({ behavior: "smooth", block: "center" })
+  else window.scrollTo({ top: 0, behavior: "smooth" })
+}
 
 const gridVariants = {
   hidden: { opacity: 0 },
@@ -51,8 +59,18 @@ export function PopularDestinationsGrid({ destinations }: Props) {
 }
 
 function DestCard({ dest, t }: { dest: PopularDestination; t: ReturnType<typeof useTranslations> }) {
+  const handleClick = () => {
+    dispatchPrefillDestination({ iata: dest.iata, name: dest.city, city: dest.city })
+  }
+
   return (
-    <div className="bg-white rounded-xl border border-border p-5 hover:shadow-md transition-shadow cursor-pointer">
+    <div
+      role="button"
+      tabIndex={0}
+      onClick={handleClick}
+      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") handleClick() }}
+      className="bg-white rounded-xl border border-border p-5 hover:shadow-md hover:border-primary/40 transition-all cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-primary"
+    >
       <div className="text-3xl mb-3">{dest.flag}</div>
       <div className="font-semibold text-secondary-foreground text-lg">{dest.city}</div>
       <div className="text-sm text-muted-foreground mb-2">{dest.iata}</div>

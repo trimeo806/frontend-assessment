@@ -437,3 +437,4 @@
 {"ts":"2026-03-20T10:01:46.378Z","hook":"scout-block","status":"crash","error":"path must not be empty"}
 {"ts":"2026-03-20T10:02:23.946Z","hook":"scout-block","status":"crash","error":"path must not be empty"}
 {"ts":"2026-03-20T10:04:19.324Z","hook":"scout-block","status":"crash","error":"path must not be empty"}
+{"ts":"2026-03-20T10:43:22.575Z","hook":"scout-block","status":"crash","error":"path must not be empty"}

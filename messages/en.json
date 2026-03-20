@@ -51,6 +51,7 @@
     "priceRange": "Price range",
     "priceUpTo": "Price: up to {max}",
     "sort": {
+      "label": "Sort by",
       "cheapest": "Cheapest",
       "fastest": "Fastest",
       "earliest": "Earliest"
@@ -70,7 +71,9 @@
     "noFlightsHint": "Try adjusting your filters or search different dates",
     "adjustFilters": "Try adjusting your filters",
     "perPerson": "per person",
-    "pax": "pax"
+    "pax": "pax",
+    "errorHeading": "Failed to load flights",
+    "errorDetail": "Something went wrong. Please try again."
   },
   "passengers": {
     "heading": "Passenger details",
@@ -120,7 +123,9 @@
     "booking": "Booking…",
     "offerExpiredTitle": "Flight offer expired",
     "offerExpiredDescription": "This flight is no longer available. Please search again to find current prices.",
-    "startNewSearch": "Start new search"
+    "startNewSearch": "Start new search",
+    "errorHeading": "Something went wrong",
+    "errorDetail": "Please try again."
   },
   "confirmation": {
     "confirmed": "Booking confirmed!",
@@ -139,7 +144,9 @@
     "passengers": "Passengers",
     "unableToRetrieve": "Unable to retrieve booking",
     "unableToRetrieveDetail": "We couldn't load your booking details. Please check your email for confirmation.",
-    "returnToSearch": "Return to search"
+    "returnToSearch": "Return to search",
+    "errorHeading": "Failed to load confirmation",
+    "errorDetail": "Something went wrong. Please try again."
   },
   "stepper": {
     "search": "Search",

@@ -3,6 +3,7 @@ import { useEffect, useState, startTransition } from "react"
 import { useTranslations } from "next-intl"
 import { useRouter } from "@/navigation"
 import { useFlightStore } from "@/lib/store"
+import { ROUTES } from "@/lib/constants"
 import {
   AlertDialog, AlertDialogAction, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle
@@ -21,13 +22,13 @@ export function OfferExpiryGuard() {
       startTransition(() => setExpired(true))
       return
     }
-    const t = setTimeout(() => startTransition(() => setExpired(true)), ms)
-    return () => clearTimeout(t)
+    const timerId = setTimeout(() => startTransition(() => setExpired(true)), ms)
+    return () => clearTimeout(timerId)
   }, [selectedOffer])
 
   const handleNewSearch = () => {
     resetAll()
-    router.replace("/")
+    router.replace(ROUTES.HOME)
   }
 
   return (

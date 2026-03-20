@@ -65,7 +65,16 @@ export const searchFormDefaults: SearchFormValues = {
 
 // ─── Passenger Form ──────────────────────────────────────────────────────────
 
-export const singlePassengerSchema = z.object({
+const identityDocumentSchema = z.object({
+  type:                 z.literal("passport"),
+  number:               z.string().min(3, "Passport number required"),
+  issuing_country_code: z.string().length(2, "Enter 2-letter country code").transform(s => s.toUpperCase()),
+  expires_on:           z.string()
+    .min(1, "Expiry date required")
+    .refine(d => !isNaN(Date.parse(d)) && new Date(d) > new Date(), "Passport must not be expired"),
+})
+
+const basePassengerFields = {
   title:       z.enum(["mr", "ms", "mrs", "miss", "dr"]),
   given_name:  z.string().min(1, "First name required"),
   family_name: z.string().min(1, "Last name required"),
@@ -79,15 +88,22 @@ export const singlePassengerSchema = z.object({
   gender:      z.enum(["m", "f"]),
   email:       z.string().email("Enter a valid email"),
   phone:       z.string().regex(/^\+\d{7,15}$/, "Use international format e.g. +60123456789"),
-  identity_document: z.object({
-    type:                 z.literal("passport"),
-    number:               z.string().min(3, "Passport number required"),
-    issuing_country_code: z.string().length(2, "Enter 2-letter country code").transform(s => s.toUpperCase()),
-    expires_on:           z.string()
-      .min(1, "Expiry date required")
-      .refine(d => !isNaN(Date.parse(d)) && new Date(d) > new Date(), "Passport must not be expired"),
-  }).optional(),
+}
+
+export const singlePassengerSchema = z.object({
+  ...basePassengerFields,
+  identity_document: identityDocumentSchema.optional(),
 })
+
+export function makePassengerFormSchema(requiresPassport: boolean) {
+  const passengerSchema = z.object({
+    ...basePassengerFields,
+    identity_document: requiresPassport
+      ? identityDocumentSchema
+      : identityDocumentSchema.optional(),
+  })
+  return z.object({ passengers: z.array(passengerSchema) })
+}
 
 export const passengerFormSchema = z.object({
   passengers: z.array(singlePassengerSchema),
