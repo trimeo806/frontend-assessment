@@ -207,7 +207,7 @@ See [competitive-research.md](./competitive-research.md) for the full analysis.
 3. Triggered deployment via `git push origin master`
 4. Verified live URL end-to-end: search → select → passenger form → booking confirmation
 
-**Live URL**: https://sky-book.vercel.app
+**Live URL**: https://flight-explorer-twenty-six.vercel.app/en
 
 ---
 

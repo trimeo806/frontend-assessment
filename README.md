@@ -81,4 +81,5 @@ Full technical and process documentation is in the [`docs/`](./docs/) directory:
 | [docs/architecture.md](./docs/architecture.md) | System architecture, library choices and rationale, rendering strategy, state management, route guard pattern |
 | [docs/competitive-research.md](./docs/competitive-research.md) | 7 OTA platforms studied, Skyscanner as primary reference, patterns adopted and deliberately avoided |
 | [docs/ai-tools.md](./docs/ai-tools.md) | Claude Code + tri_ai_kit usage, which agents handled which phases, concrete examples of where AI helped most |
+| [docs/ai-kit.md](./docs/ai-kit.md) | tri_ai_kit internals — skills vs agents distinction, every skill and agent used, what each produced |
 | [docs/workflow.md](./docs/workflow.md) | 10-phase development workflow with diagram — from brainstorm to deployment |
