@@ -1,6 +1,6 @@
 # Architecture — SkyBook Flight Booking
 
-**Stack**: Next.js 15 App Router · React 19 · TypeScript · Tailwind CSS v4 · shadcn/ui · Zustand
+**Stack**: Next.js 16 App Router · React 19 · TypeScript · Tailwind CSS v4 · shadcn/ui · Zustand
 **Deployment**: Vercel · **API**: Duffel REST v2
 
 ---
@@ -11,44 +11,30 @@
 
 Who lives where, and what calls what. The `DUFFEL_API_KEY` only exists in the server layer.
 
-```
-╔══════════════════════════════════════════════════════════════════════════════╗
-║  BROWSER  (client bundle — no secrets)                                      ║
-║                                                                              ║
-║  Client Components                    Zustand (sessionStorage)               ║
-║  ├── SearchForm          ◄──────────► offerRequestId   passengerIds[]        ║
-║  ├── ResultsList                      selectedOffer    orderId               ║
-║  ├── PassengerForm                    search{}         filters{}             ║
-║  └── [route guards]                                                          ║
-║                                                                              ║
-║  How Client Components call the server:                                      ║
-║  • Mutations  →  invoke Server Actions directly (Next.js RPC over HTTP)      ║
-║  • Read data  →  fetch("/api/places") or fetch("/api/flights/offers")        ║
-╚══════════╤════════════════════════════════════╤═════════════════════════════╝
-           │ Server Actions                     │ Route Handlers
-           │ searchFlights()                    │ GET /api/places
-           │ getOffer()                         │ GET /api/flights/offers
-           │ createOrder()                      │
-╔══════════▼════════════════════════════════════▼═════════════════════════════╗
-║  NEXT.JS / VERCEL  (server — holds DUFFEL_API_KEY)                          ║
-║                                                                              ║
-║  Server Actions          Route Handlers         Server Components           ║
-║  src/actions/            src/app/api/           src/app/[locale]/           ║
-║  ├── search.ts           ├── places/            confirmation/               ║
-║  ├── offers.ts           │   route.ts           [orderId]/page.tsx          ║
-║  └── booking.ts          └── flights/offers/    (fetches order directly     ║
-║                              route.ts            on render — no client JS)  ║
-╚══════════╤════════════════════════════════════╤═════════════════════════════╝
-           │ Authorization: Bearer $KEY          │
-╔══════════▼════════════════════════════════════▼═════════════════════════════╗
-║  DUFFEL API  (https://api.duffel.com · Duffel-Version: v2)                  ║
-║                                                                              ║
-║  Called by Route Handlers:              Called by Server Actions:            ║
-║  GET /places/suggestions?query=         POST /air/offer_requests             ║
-║  GET /air/offers?offer_request_id=      GET  /air/offers/{id}               ║
-║                                         POST /air/orders                     ║
-║                                         GET  /air/orders/{id}               ║
-╚══════════════════════════════════════════════════════════════════════════════╝
+```mermaid
+graph TB
+    subgraph BROWSER["Browser — client bundle, no secrets"]
+        CC["Client Components\nSearchForm · ResultsList\nPassengerForm · route guards"]
+        ZS[("Zustand\nsessionStorage\nofferRequestId · passengerIds\nselectedOffer · orderId")]
+        CC <-->|reads / writes| ZS
+    end
+
+    subgraph SERVER["Next.js / Vercel — server, holds DUFFEL_API_KEY"]
+        SA["Server Actions\nsearchFlights() · getOffer() · createOrder()"]
+        RH["Route Handlers\n/api/places · /api/flights/offers"]
+        SC["Server Component\nconfirmation/[orderId]/page.tsx"]
+    end
+
+    subgraph DUFFEL["Duffel API — api.duffel.com · Duffel-Version: v2"]
+        D_RH["GET /places/suggestions\nGET /air/offers"]
+        D_SA["POST /air/offer_requests\nGET /air/offers/{id}\nPOST /air/orders\nGET /air/orders/{id}"]
+    end
+
+    CC -->|mutations| SA
+    CC -->|"fetch /api/..."| RH
+    SA -->|"Bearer DUFFEL_API_KEY"| D_SA
+    RH -->|"Bearer DUFFEL_API_KEY"| D_RH
+    SC -->|"Bearer DUFFEL_API_KEY"| D_SA
 ```
 
 ---
@@ -57,172 +43,168 @@ Who lives where, and what calls what. The `DUFFEL_API_KEY` only exists in the se
 
 Every user action, API call, payload, response, and what gets stored.
 
+**Overview:**
+
+```mermaid
+sequenceDiagram
+    actor U as User
+    participant F1 as F1 Search
+    participant F2 as F2 Results
+    participant F3 as F3 Passengers
+    participant F4 as F4 Confirmation
+    participant Z as Zustand
+    participant D as Duffel API
+
+    U->>F1: Enter route, dates, passengers
+    F1->>D: POST /air/offer_requests
+    D-->>F1: offerRequestId, passengerIds[]
+    F1->>Z: save offerRequestId, passengerIds
+    F1-->>F2: navigate /results?orq=...
+
+    F2->>D: GET /air/offers (Route Handler proxy)
+    D-->>F2: paginated offers[]
+    U->>F2: Select a flight
+    F2->>D: GET /air/offers/{id} (Server Action)
+    D-->>F2: full offer + expires_at
+    F2->>Z: save selectedOffer
+    F2-->>F3: navigate /passengers
+
+    U->>F3: Fill passenger details
+    F3->>D: POST /air/orders (Server Action)
+    D-->>F3: orderId, booking_reference
+    F3->>Z: save orderId
+    F3-->>F4: navigate /confirmation/{orderId}
+
+    F4->>D: GET /air/orders/{orderId}
+    D-->>F4: full order details
+    F4-->>U: Booking confirmed
 ```
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- F1 — SEARCH                              (Client Component + Server Action)
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
- User types "KUL"
-   → GET /places/suggestions?query=KUL&types[]=airport
-   ← [{ iata_code: "KUL", name: "Kuala Lumpur International", city_name: "Kuala Lumpur" }]
-   → Combobox dropdown shows options; user selects
+**Detailed breakdown — request and response specifics:**
 
- User clicks "Search flights"
-   → POST /air/offer_requests?return_offers=false
-     body: {
-       cabin_class: "economy",
-       slices: [
-         { origin: "KUL", destination: "SIN", departure_date: "2026-05-15" },
-         { origin: "SIN", destination: "KUL", departure_date: "2026-05-20" }  ← round-trip only
-       ],
-       passengers: [{ type: "adult" }, { type: "adult" }]
-     }
-   ← { id: "orq_xxx", passengers: [{ id: "pas_aaa" }, { id: "pas_bbb" }] }
-   → Zustand saves:  offerRequestId = "orq_xxx"
-                     passengerIds   = ["pas_aaa", "pas_bbb"]   ⚠️ reuse in order
-   → Navigate to /results?orq=orq_xxx
+```mermaid
+sequenceDiagram
+    actor U as User
+    participant App
+    participant Z as Zustand
+    participant RH as Route Handler
+    participant SA as Server Action
+    participant D as Duffel API
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- F2 — RESULTS                             (Client Component + Route Handler)
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    rect rgb(239, 246, 255)
+        Note over U,D: F1 — SEARCH (Client Component + Server Action)
+        U->>App: type airport e.g. KUL
+        App->>RH: GET /api/places?query=KUL
+        RH->>D: GET /places/suggestions?query=KUL&types=airport
+        D-->>App: array of airports — iata_code, name, city_name
+        Note over App: Combobox shows options, user selects origin and destination
+        U->>App: click Search flights
+        App->>SA: searchFlights()
+        SA->>D: POST /air/offer_requests?return_offers=false
+        Note right of D: cabin_class · slices with origin+destination+date · passengers with type
+        D-->>SA: id=orq_xxx · passengers with ids pas_aaa and pas_bbb
+        SA-->>Z: offerRequestId=orq_xxx · passengerIds=pas_aaa,pas_bbb
+        Note over Z: ⚠️ passengerIds must be reused verbatim in POST /air/orders
+        App-->>App: navigate /results?orq=orq_xxx
+    end
 
- Page mounts
-   → GET /api/flights/offers?offer_request_id=orq_xxx&limit=20&sort=total_amount
-       (proxied to Duffel — keeps API key server-side)
-   ← { data: [{ id, total_amount, total_currency, expires_at, owner, slices }],
-       meta: { after: "g2EC" } }     ← cursor for next page
-   → Client filters & sorts in useMemo (no re-fetch):
-       stops filter  → slices[0].segments.length - 1
-       airline filter→ owner.iata_code
-       time filter   → new Date(slices[0].segments[0].departing_at).getHours()
-       price sort    → parseFloat(total_amount)
+    rect rgb(240, 253, 244)
+        Note over U,D: F2 — RESULTS (Client Component + Route Handler)
+        App->>RH: GET /api/flights/offers?offer_request_id=orq_xxx&limit=20&sort=total_amount
+        RH->>D: GET /air/offers — proxied, DUFFEL_API_KEY stays server-side
+        D-->>App: data array of offers with id, total_amount, total_currency, expires_at, owner, slices · meta.after=g2EC cursor
+        Note over App: useMemo filtering, no re-fetch: stops=segments.length-1 · airline=owner.iata_code · time=departing_at.getHours · price=parseFloat
+        U->>App: click Load more
+        App->>RH: GET /api/flights/offers?...&after=g2EC
+        D-->>App: next 20 offers appended to list
+        U->>App: click a flight card
+        App->>SA: getOffer(offerId)
+        SA->>D: GET /air/offers/offerId
+        D-->>SA: full offer with identity_docs_required=false and expires_at timestamp
+        SA-->>Z: selectedOffer with id, total_amount, total_currency, slices
+        App-->>App: navigate /passengers
+    end
 
- User clicks "Load more"
-   → GET /api/flights/offers?...&after=g2EC
-   ← next 20 offers appended to list
+    rect rgb(255, 247, 237)
+        Note over U,D: F3 — PASSENGER DETAILS (Client Component — no API call)
+        App->>Z: read selectedOffer.passengers.length and passengerIds
+        Note over App: Per-passenger: title · given_name · family_name · born_on past date · gender
+        Note over App: Lead passenger only: email · phone_number in E.164 e.g. +60123456789
+        Note over App: identity_documents only if passenger_identity_documents_required=true
+        U->>App: submit Confirm Booking
+        App->>SA: createOrder(passengers)
+        SA->>D: POST /air/orders
+        Note right of D: type=instant · selected_offers · payments with balance+currency+amount · passengers with id+name+born_on+title+gender+email+phone
+        D-->>SA: id=ord_xxx · booking_reference=ABCDEF · status=confirmed
+        SA-->>Z: orderId=ord_xxx
+        App-->>App: navigate /confirmation/ord_xxx
+    end
 
- User clicks a flight card
-   → GET /air/offers/{offerId}     ← Server Action (needs full offer detail)
-   ← { ...full offer, passenger_identity_documents_required: false,
-        expires_at: "2026-05-15T10:00:00Z" }
-   → Zustand saves:  selectedOffer = { id, total_amount, total_currency, slices, ... }
-   → Navigate to /passengers
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- F3 — PASSENGER DETAILS                   (Client Component — no API call)
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
- Page reads from Zustand:
-   selectedOffer.passengers.length  → how many PassengerCard forms to render
-   passengerIds[]                   → IDs to use in the order payload
-
- Per passenger form (React Hook Form + Zod, validated on blur):
-   title        → "mr" | "ms" | "mrs" | "miss" | "dr"
-   given_name   → string, no special chars
-   family_name  → string, no special chars
-   born_on      → "YYYY-MM-DD", must be past date
-   gender       → "m" | "f"
-   email        → valid email (lead passenger only)
-   phone_number → E.164 format e.g. "+60123456789" (lead passenger only)
-   identity_documents → only if passenger_identity_documents_required = true
-
- User clicks "Confirm Booking"
-   → calls createOrder() Server Action with form data
-   → Navigate to /confirmation/{orderId}
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- F4 — BOOKING CONFIRMATION                (Server Action + Server Component)
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
- createOrder() Server Action fires:
-   → POST /air/orders
-     body: {
-       type: "instant",
-       selected_offers: ["off_xxx"],
-       payments: [{
-         type: "balance",
-         currency: selectedOffer.total_currency,  ← must match exactly (e.g. "EUR")
-         amount: selectedOffer.total_amount        ← must match exactly (e.g. "47.17")
-       }],
-       passengers: [{
-         id: "pas_aaa",          ← from Zustand passengerIds[]
-         given_name: "Tony",
-         family_name: "Stark",
-         born_on: "1980-07-24",
-         title: "mr",
-         gender: "m",
-         email: "tony@example.com",
-         phone_number: "+60123456789"
-       }]
-     }
-   ← { id: "ord_xxx", booking_reference: "ABCDEF", status: "confirmed" }
-   → Zustand saves:  orderId = "ord_xxx"
-
- /confirmation/ord_xxx page.tsx (Server Component) renders:
-   → GET /air/orders/ord_xxx   (direct server-side fetch — no hydration needed)
-   ← { booking_reference, status, slices, passengers, total_amount }
-   → Displays: ✅ booking reference · itinerary · passenger list · price breakdown
-
- Error cases handled:
-   offer_expired       → "Session expired. Please search again."
-   price_changed       → re-fetch offer, show new price, ask user to confirm
-   invalid_passenger_name → return to F3 with field highlighted
+    rect rgb(253, 244, 255)
+        Note over U,D: F4 — BOOKING CONFIRMATION (Server Action + Server Component)
+        App->>D: GET /air/orders/ord_xxx — direct server-side fetch, no hydration needed
+        D-->>App: booking_reference · status · slices · passengers · total_amount
+        App-->>U: booking reference · itinerary · passenger list · price breakdown
+        Note over App,D: offer_expired → Session expired. Please search again.
+        Note over App,D: price_changed → re-fetch offer, show new price, ask user to confirm
+        Note over App,D: invalid_passenger_name → return to F3 with field highlighted
+    end
 ```
 
 ---
 
 ### 3 — Zustand Store: What Each Screen Reads and Writes
 
-```
-                    ┌─────────────────────────────────────────────────────┐
-                    │  ZUSTAND STORE  (sessionStorage — per tab)          │
-                    │                                                     │
-                    │  search{}              offerRequestId               │
-                    │  passengerIds[]        selectedOffer                │
-                    │  filters{}             sortBy                       │
-                    │  orderId                                            │
-                    └──────┬──────────┬───────────┬──────────┬───────────┘
-                     WRITES│    READS │     READS │    WRITES│
-                           │          │           │          │
-              ┌────────────▼┐  ┌──────▼──────┐  ┌▼──────────▼──┐  ┌─────▼────────┐
-              │  F1 SEARCH  │  │  F2 RESULTS │  │ F3 PASSENGERS│  │F4 CONFIRMATION│
-              │             │  │             │  │              │  │               │
-              │ Writes:     │  │ Reads:      │  │ Reads:       │  │ Reads:        │
-              │ search{}    │  │ offerReqId  │  │ passengerIds │  │ selectedOffer │
-              │ offerReqId  │  │             │  │ selectedOffer│  │ passengerIds  │
-              │ passengerIds│  │ Writes:     │  │              │  │ offerReqId    │
-              └─────────────┘  │ selectedOff │  │ Writes:      │  │               │
-                               │ filters{}   │  │ (none)       │  │ Writes:       │
-                               │ sortBy      │  └──────────────┘  │ orderId       │
-                               └─────────────┘                    └───────────────┘
+```mermaid
+graph LR
+    subgraph STORE["Zustand Store — sessionStorage, per tab"]
+        direction TB
+        s["search{}"]
+        ori["offerRequestId"]
+        pid["passengerIds[]"]
+        so["selectedOffer"]
+        oid["orderId"]
+        fi["filters{}"]
+        sb["sortBy"]
+    end
+
+    F1["F1 Search"] -->|writes| s & ori & pid
+    ori -->|reads| F2["F2 Results"]
+    F2 -->|writes| so & fi & sb
+    pid -->|reads| F3["F3 Passengers"]
+    so -->|reads| F3
+    so -->|reads| F4["F4 Confirmation"]
+    pid -->|reads| F4
+    F4 -->|writes| oid
 ```
 
 ---
 
 ### 4 — Component Tree (per screen)
 
-```
-F1 Search                    F2 Results                   F3 Passengers             F4 Confirmation
-page.tsx (RSC shell)         page.tsx (RSC shell)         page.tsx (RSC shell)      page.tsx (Server RSC)
-└── SearchForm (Client)      └── ResultsList (Client)     └── PassengerForm (Client) ├── ConfirmationCard
-    ├── TripTypePills             ├── StickyHeader              ├── OfferExpiryGuard  └── ErrorCard
-    ├── AirportCombobox           ├── SortBar                   ├── PassengerCard × N
-    │   (debounce 300ms)          ├── FilterPanel (≥lg)         │   ├── DateOfBirthPicker
-    ├── SwapButton                │   ├── Stops filter          │   ├── Title / Name fields
-    ├── DateRangePicker           │   ├── Airlines filter       │   ├── Email / Phone
-    │   (single or range)         │   ├── Time chips           │   └── Passport (conditional)
-    └── PassengerSelector         │   └── Price slider         └── BookingSummary (sticky)
-        (adults/children/         ├── FilterSheet (mobile)
-         infants counters)        │   (same filters, drawer)
-                                  ├── FlightCard × N
-                                  │   (airline · times · stops · price)
-                                  ├── FlightCardSkeleton × 3
-                                  │   (shown while loading)
-                                  └── EmptyState
+```mermaid
+graph TD
+    subgraph S1["F1 — Search  ·  page.tsx RSC"]
+        SearchForm["SearchForm Client"] --> TripTypePills & AirportCombobox["AirportCombobox\ndebounce 300ms"] & SwapButton & DateRangePicker & PassengerSelector["PassengerSelector\nadults · children · infants"]
+    end
 
-Shared (every screen):  NavBar · ProgressStepper · LocaleSwitcher
-Route guards:           RequireOfferRequest  →  /results    (needs offerRequestId)
-                        RequireSelectedOffer →  /passengers (needs selectedOffer)
+    subgraph S2["F2 — Results  ·  page.tsx RSC"]
+        ResultsList["ResultsList Client"] --> StickyHeader & SortBar & FlightCard["FlightCard × N\nairline · times · stops · price"] & FCS["FlightCardSkeleton × 3"] & EmptyState
+        ResultsList --> FilterPanel["FilterPanel ≥lg\nStops · Airlines · Time · Price"] & FilterSheet["FilterSheet mobile\nsame filters, drawer"]
+    end
+
+    subgraph S3["F3 — Passengers  ·  page.tsx RSC"]
+        PassengerForm["PassengerForm Client"] --> OfferExpiryGuard & BookingSummary["BookingSummary sticky"]
+        PassengerForm --> PassengerCard["PassengerCard × N"] --> DateOfBirthPicker & PassportFields["Passport fields\nconditional"]
+    end
+
+    subgraph S4["F4 — Confirmation  ·  Server RSC"]
+        ConfirmationCard
+        ErrorCard
+    end
+
+    SHARED(["Shared every screen\nNavBar · ProgressStepper · LocaleSwitcher"])
+    GUARDS(["Route Guards\nRequireOfferRequest → /results needs offerRequestId\nRequireSelectedOffer → /passengers needs selectedOffer"])
 ```
 
 ---
@@ -233,7 +215,7 @@ Every dependency was chosen deliberately. This table documents the decision:
 
 | Layer | Chosen | Rejected | Why chosen |
 |-------|--------|----------|------------|
-| **Framework** | Next.js 15 App Router | CRA, Vite+React | Required by assessment; App Router gives Server Components + Server Actions in one framework |
+| **Framework** | Next.js 16 App Router | CRA, Vite+React | Required by assessment; App Router gives Server Components + Server Actions in one framework |
 | **State** | Zustand v5 | Redux Toolkit, Jotai, Context | ~2KB bundle vs ~25KB Redux; single-store pattern suits a 4-screen linear flow; `persist` middleware built-in |
 | **Forms** | React Hook Form + Zod | Formik, plain state | Uncontrolled forms = no re-render per keystroke; Zod schemas serve double duty (runtime validation + static types) |
 | **UI** | shadcn/ui (Radix + Tailwind) | MUI, Chakra, Ant Design | Copy-paste ownership — no vendor lock-in; Radix provides combobox ARIA, focus management, keyboard navigation out of the box |

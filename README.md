@@ -21,7 +21,7 @@ https://flight-explorer-twenty-six.vercel.app/en
 
 | Layer      | Technology                       |
 | ---------- | -------------------------------- |
-| Framework  | Next.js 15, React 19             |
+| Framework  | Next.js 16, React 19             |
 | Language   | TypeScript                       |
 | Styling    | Tailwind CSS v4, shadcn/ui       |
 | State      | Zustand                          |
@@ -78,15 +78,11 @@ Full technical and process documentation is in the [`docs/`](./docs/) directory:
 | Document                                                       | What it covers                                                                                                          |
 | -------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
 | [docs/index.md](./docs/index.md)                               | Documentation index — brief description of each document                                                                |
-| [docs/architecture.html](./docs/architecture.html) ★           | **System architecture (rendered)** — 4 Mermaid diagrams: system layers, booking sequence, Zustand store, component tree |
-| [docs/architecture.md](./docs/architecture.md)                 | System architecture source — library choices, rendering strategy, state management, route guard pattern                 |
-| [docs/workflow.html](./docs/workflow.html) ★                   | **Development workflow (rendered)** — 10-phase flowchart with colour-coded groups, phase cards, key learnings           |
-| [docs/workflow.md](./docs/workflow.md)                         | Development workflow source — 10-phase process from brainstorm to deployment                                            |
+| [docs/architecture.md](./docs/architecture.md)                 | System architecture — library choices, rendering strategy, state management, route guard pattern, Mermaid diagrams      |
+| [docs/workflow.md](./docs/workflow.md)                         | Development workflow — 10-phase process from brainstorm to deployment, key learnings                                    |
 | [docs/competitive-research.md](./docs/competitive-research.md) | 7 OTA platforms studied, Skyscanner as primary reference, patterns adopted and deliberately avoided                     |
 | [docs/ai-tools.md](./docs/ai-tools.md)                         | Claude Code + tri_ai_kit usage, which agents handled which phases, concrete examples of where AI helped most            |
 | [docs/ai-kit.md](./docs/ai-kit.md)                             | tri_ai_kit internals — skills vs agents distinction, every skill and agent used, what each produced                     |
-
-> ★ Open in any browser — diagrams render without extensions.
 
 ---
 
@@ -144,15 +140,15 @@ A post-build audit identified 7 gaps. This plan tracks the fixes.
 
 #### Gaps identified
 
-| #   | Gap                                                             | Status  |
-| --- | --------------------------------------------------------------- | ------- |
-| G1  | Passport / identity document fields missing from passenger form | Phase 1 |
-| G2  | Phone validation not enforcing E.164 (`+...`) format            | Phase 1 |
-| G3  | Mobile sticky booking bar missing on `/passengers`              | Phase 2 |
-| G4  | `generateMetadata` missing on search + results pages            | Phase 2 |
-| G5  | `.env.example` missing at repo root                             | Phase 3 |
-| G6  | `README.md` was default create-next-app boilerplate             | Phase 3 |
-| G7  | `ARCHITECTURE.md` missing (required by assessment)              | Phase 4 |
+| #   | Gap                                                             | Status      |
+| --- | --------------------------------------------------------------- | ----------- |
+| G1  | Passport / identity document fields missing from passenger form | Pending     |
+| G2  | Phone validation not enforcing E.164 (`+...`) format            | Pending     |
+| G3  | Mobile sticky booking bar missing on `/passengers`              | Pending     |
+| G4  | `generateMetadata` missing on search + results pages            | Pending     |
+| G5  | `.env.example` missing at repo root                             | Pending     |
+| G6  | `README.md` was default create-next-app boilerplate             | ✅ Done     |
+| G7  | `ARCHITECTURE.md` missing (required by assessment)              | ✅ Done     |
 
 #### Fix phases
 
@@ -162,3 +158,30 @@ A post-build audit identified 7 gaps. This plan tracks the fixes.
 | P2 — Mobile bar + metadata       | Sticky `MobileBookingBar`, `generateMetadata` on all pages      | `frontend-developer` |
 | P3 — Setup documentation         | `.env.example`, rewritten `README.md`                           | `docs-manager`       |
 | P4 — Architecture documentation  | `ARCHITECTURE.md` covering all 4 assessment requirements        | `docs-manager`       |
+
+---
+
+## Future Implementation
+
+Work tracked in the gap resolution plan ([plans/260320-gap-resolution/plan.md](./plans/260320-gap-resolution/plan.md)). The following items remain open:
+
+### Pending gaps (G1–G5)
+
+| # | Item | Detail |
+| --- | --- | --- |
+| G1 | Passport / identity document fields | Conditional fields on passenger form when offer requires docs; Duffel payload extension |
+| G2 | E.164 phone validation | Tighten regex to `^\+\d{7,15}$`; current `min(7)` allows invalid formats |
+| G3 | Mobile sticky booking bar | `MobileBookingBar` component (`lg:hidden`) on `/passengers` showing price + submit |
+| G4 | Page metadata | `generateMetadata` on search (`/`) and results (`/results`) pages |
+| G5 | `.env.example` | Environment template file at repo root for new developer setup |
+
+### Potential future enhancements
+
+| Area | Description |
+| --- | --- |
+| Seat selection | Add seat map step between passenger details and confirmation |
+| Fare rules | Display baggage allowance and fare conditions on results and confirmation |
+| Price alerts | Notify users when tracked route prices drop |
+| User accounts | Save past searches and bookings with authentication |
+| Multi-city search | Support complex itineraries beyond one-way and round-trip |
+| Payment integration | Add Stripe or Duffel Pay for real payment flow instead of test orders |

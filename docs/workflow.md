@@ -1,6 +1,6 @@
 # Development Workflow — SkyBook
 
-This document or [workflow.html](./workflow.html) describes the 10-phase process from reading the assessment to deploying the live application.
+This document describes the 10-phase process from reading the assessment to deploying the live application.
 
 ---
 
@@ -9,25 +9,25 @@ This document or [workflow.html](./workflow.html) describes the 10-phase process
 ```mermaid
 flowchart TD
     subgraph RESEARCH["Phases 1–4 · Research"]
-        A["1 — Brainstorm\nDecompose assessment\nScreens · API · deliverables"]
-        B["2 — Competitor Research\n7 OTAs studied and scored\nSkyscanner → primary reference"]
-        C["3 — Tech Stack Research\nZustand · RHF+Zod · shadcn/ui\nEach chosen with documented rationale"]
-        D["4 — API Research\nLive-test 6 Duffel endpoints\nMap TypeScript types · discover constraints"]
+        A["1 — Brainstorm<br/>Decompose assessment<br/>Screens · API · deliverables"]
+        B["2 — Competitor Research<br/>7 OTAs studied and scored<br/>Skyscanner → primary reference"]
+        C["3 — Tech Stack Research<br/>Zustand · RHF+Zod · shadcn/ui<br/>Each chosen with documented rationale"]
+        D["4 — API Research<br/>Live-test 6 Duffel endpoints<br/>Map TypeScript types · discover constraints"]
     end
 
     subgraph PLANNING["Phases 5–6 · Planning"]
-        E["5 — Plan\n12 implementation plan files\nRouting · tokens · data layer · animations"]
-        F["6 — Architecture Gate\nfrontend-architect locks component split\nRendering strategy · state shape · SSR guards"]
+        E["5 — Plan<br/>12 implementation plan files<br/>Routing · tokens · data layer · animations"]
+        F["6 — Architecture Gate<br/>frontend-architect locks component split<br/>Rendering strategy · state shape · SSR guards"]
     end
 
     subgraph BUILD["Phases 7–8 · Build"]
-        G["7 — Implement\nSearch → Results → Passengers → Confirmation\nServer Actions · Route Handlers · i18n"]
-        H["8 — Code Review\nTypeScript · Accessibility · Code quality\nAll issues resolved before testing"]
+        G["7 — Implement<br/>Search → Results → Passengers → Confirmation<br/>Server Actions · Route Handlers · i18n"]
+        H["8 — Code Review<br/>TypeScript · Accessibility · Code quality<br/>All issues resolved before testing"]
     end
 
     subgraph VERIFY["Phases 9–10 · Verify & Ship"]
-        I["9 — Test & Fix\nEnd-to-end booking flow\nEdge cases · mobile · round-trip · i18n"]
-        J["10 — Deploy\nVercel · DUFFEL_API_KEY in env vars\nLive URL verified end-to-end"]
+        I["9 — Test & Fix<br/>End-to-end booking flow<br/>Edge cases · mobile · round-trip · i18n"]
+        J["10 — Deploy<br/>Vercel · DUFFEL_API_KEY in env vars<br/>Live URL verified end-to-end"]
     end
 
     A --> B --> C --> D --> E --> F --> G --> H --> I --> J
