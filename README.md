@@ -87,3 +87,86 @@ Full technical and process documentation is in the [`docs/`](./docs/) directory:
 | [docs/ai-kit.md](./docs/ai-kit.md) | tri_ai_kit internals — skills vs agents distinction, every skill and agent used, what each produced |
 
 > ★ Open in any browser — diagrams render without extensions.
+
+---
+
+## Implementation Plans
+
+All planning artefacts live in [`plans/`](./plans/). Two plan batches were produced: the initial build plan and a late-stage gap-resolution plan.
+
+### Batch 1 — Initial Build (`plans/260315-1200-flight-booking-app/`)
+
+#### Research & Exploration
+
+| Plan | What it covers |
+|------|----------------|
+| [research-overview.md](./plans/260315-1200-flight-booking-app/research-overview.md) | Top-level summary — frontend vs backend assessment split, stack versions, API endpoints, deployment targets |
+| [frontend/plans/1-booking-flow-overview.md](./plans/260315-1200-flight-booking-app/frontend/plans/1-booking-flow-overview.md) | 4-screen flow (Search → Results → Passengers → Confirm), API call sequence, Zustand state handoffs, error handling matrix |
+| [frontend/plans/2-duffel-api-exploration.md](./plans/260315-1200-flight-booking-app/frontend/plans/2-duffel-api-exploration.md) | Duffel API live-tested results — token verified, all 6 endpoints with actual request/response payloads |
+| [frontend/plans/3-research-overview-frontend.md](./plans/260315-1200-flight-booking-app/frontend/plans/3-research-overview-frontend.md) | Full frontend research — tech stack rationale, repo structure, architecture, requirements breakdown, implementation workflow, hosting, risks |
+| [frontend/plans/4-research-ui-ux.md](./plans/260315-1200-flight-booking-app/frontend/plans/4-research-ui-ux.md) | UI/UX decisions — screen-by-screen design, component specs, design system, patterns to adopt/avoid |
+| [frontend/plans/5-research-ui-ux-competitor-analysis.md](./plans/260315-1200-flight-booking-app/frontend/plans/5-research-ui-ux-competitor-analysis.md) | Competitor deep-dive — 7 OTA platforms (Google Flights, Skyscanner, Kayak, Expedia, Trip.com, AirAsia, Booking.com) |
+| [research-animations.md](./plans/260315-1200-flight-booking-app/research-animations.md) | Animation strategy — Framer Motion (LazyMotion) approach, which transitions to use per screen |
+| [research-responsive-design.md](./plans/260315-1200-flight-booking-app/research-responsive-design.md) | Responsive design research — mobile-first breakpoints, container queries, touch targets |
+
+#### Implementation Plans (numbered phases)
+
+| Plan | What it covers |
+|------|----------------|
+| [00-architecture.md](./plans/260315-1200-flight-booking-app/frontend/implementation-plans/00-architecture.md) | Project scaffold — full directory tree, routing, data-fetching strategy, type system, i18n, environment setup |
+| [01-tailwind-config.md](./plans/260315-1200-flight-booking-app/frontend/implementation-plans/01-tailwind-config.md) | Tailwind CSS v4 configuration — `@theme` tokens, shadcn/ui integration, font setup |
+| [02-design-tokens.md](./plans/260315-1200-flight-booking-app/frontend/implementation-plans/02-design-tokens.md) | Design tokens — Skyscanner-inspired palette, spacing scale, typography, semantic colour mapping |
+| [03-shadcn-components.md](./plans/260315-1200-flight-booking-app/frontend/implementation-plans/03-shadcn-components.md) | shadcn/ui component list — which components, where each is used, install commands |
+| [04-data-layer.md](./plans/260315-1200-flight-booking-app/frontend/implementation-plans/04-data-layer.md) | Data layer — Server Actions for mutations, Route Handlers for GETs, token isolation, caching strategy |
+| [05-route-guards-persistence.md](./plans/260315-1200-flight-booking-app/frontend/implementation-plans/05-route-guards-persistence.md) | Route guards + state persistence — Zustand + sessionStorage, back-navigation, offer expiry modal |
+| [06-form-validation.md](./plans/260315-1200-flight-booking-app/frontend/implementation-plans/06-form-validation.md) | Form validation — react-hook-form + Zod schemas for Search (F1) and Passenger (F3) forms |
+| [07-layout-guide.md](./plans/260315-1200-flight-booking-app/frontend/implementation-plans/07-layout-guide.md) | Layout guide — 4-screen structure, header/footer, page-level component hierarchy |
+| [08-round-trip.md](./plans/260315-1200-flight-booking-app/frontend/implementation-plans/08-round-trip.md) | Round-trip support — stacked-slices card pattern, return-date handling, Zustand shape extension |
+| [09-responsive-plan.md](./plans/260315-1200-flight-booking-app/frontend/implementation-plans/09-responsive-plan.md) | Responsive plan — mobile-first breakpoints, sticky filter bar, card reflow, touch targets |
+| [10-animation-plan.md](./plans/260315-1200-flight-booking-app/frontend/implementation-plans/10-animation-plan.md) | Animation plan — page transitions, skeleton loaders, flight card reveal, reduced-motion support |
+| [11-gaps-draft-plan.md](./plans/260315-1200-flight-booking-app/frontend/implementation-plans/11-gaps-draft-plan.md) | Initial gap review — data layer, types, guards, validation, edge cases, performance items |
+
+#### Backend Reference (separate assessment)
+
+| Plan | What it covers |
+|------|----------------|
+| [backend/research-overview-backend.md](./plans/260315-1200-flight-booking-app/backend/research-overview-backend.md) | Backend stack (FastAPI + Strawberry GraphQL), GraphQL schema, legacy API → resolver mapping, caching, deployment |
+| [backend/legacy-api-exploration.md](./plans/260315-1200-flight-booking-app/backend/legacy-api-exploration.md) | Legacy mock-travel API live-tested results — all 6 endpoints, 4 error formats, 5 date formats |
+
+#### Original Assessment Documents
+
+| Plan | What it covers |
+|------|----------------|
+| [overview/frontend-assessment.md](./plans/260315-1200-flight-booking-app/overview/frontend-assessment.md) | Original frontend assessment brief (converted from PDF) |
+| [overview/backend-assessment.md](./plans/260315-1200-flight-booking-app/overview/backend-assessment.md) | Original backend assessment brief (converted from PDF) |
+
+---
+
+### Batch 2 — Gap Resolution (`plans/260320-gap-resolution/`)
+
+A post-build audit identified 7 gaps. This plan tracks the fixes.
+
+| Plan | What it covers |
+|------|----------------|
+| [plan.md](./plans/260320-gap-resolution/plan.md) | Full gap list, effort estimates, 4 fix phases, acceptance criteria |
+
+#### Gaps identified
+
+| # | Gap | Status |
+|---|-----|--------|
+| G1 | Passport / identity document fields missing from passenger form | Phase 1 |
+| G2 | Phone validation not enforcing E.164 (`+...`) format | Phase 1 |
+| G3 | Mobile sticky booking bar missing on `/passengers` | Phase 2 |
+| G4 | `generateMetadata` missing on search + results pages | Phase 2 |
+| G5 | `.env.example` missing at repo root | Phase 3 |
+| G6 | `README.md` was default create-next-app boilerplate | Phase 3 |
+| G7 | `ARCHITECTURE.md` missing (required by assessment) | Phase 4 |
+
+#### Fix phases
+
+| Phase | Scope | Agent |
+|-------|-------|-------|
+| P1 — Passenger form completeness | Passport fields, E.164 phone validation, Duffel booking payload | `frontend-developer` |
+| P2 — Mobile bar + metadata | Sticky `MobileBookingBar`, `generateMetadata` on all pages | `frontend-developer` |
+| P3 — Setup documentation | `.env.example`, rewritten `README.md` | `docs-manager` |
+| P4 — Architecture documentation | `ARCHITECTURE.md` covering all 4 assessment requirements | `docs-manager` |
