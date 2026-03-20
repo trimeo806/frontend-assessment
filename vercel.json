@@ -2,8 +2,5 @@
   "framework": "nextjs",
   "buildCommand": "npm run build",
   "outputDirectory": ".next",
-  "installCommand": "npm install",
-  "env": {
-    "DUFFEL_API_KEY": "@duffel-api-key"
-  }
+  "installCommand": "npm install"
 }

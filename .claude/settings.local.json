@@ -72,7 +72,8 @@
       "Bash(mkdir -p \"C:/muji/tri-ai-kit/tri-ai-kit/easyGDS/assessments/frontend/src/app/[locale]/confirmation/[orderId]\")",
       "Bash(npx next:*)",
       "Bash(node_modules/.bin/next build:*)",
-      "Bash(cmd /c \"mkdir C:\\\\muji\\\\tri-ai-kit\\\\tri-ai-kit\\\\easyGDS\\\\assessments\\\\frontend\\\\plans\\\\260320-gap-resolution 2>NUL && echo created || echo exists\")"
+      "Bash(cmd /c \"mkdir C:\\\\muji\\\\tri-ai-kit\\\\tri-ai-kit\\\\easyGDS\\\\assessments\\\\frontend\\\\plans\\\\260320-gap-resolution 2>NUL && echo created || echo exists\")",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\(list\\(d.keys\\(\\)\\)\\)\")"
     ]
   },
   "enabledPlugins": {
