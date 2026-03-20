@@ -1,6 +1,6 @@
 # Development Workflow — SkyBook
 
-This document describes the 10-phase process from reading the assessment to deploying the live application.
+This document or [workflow.html](./workflow.html) describes the 10-phase process from reading the assessment to deploying the live application.
 
 ---
 
@@ -8,18 +8,34 @@ This document describes the 10-phase process from reading the assessment to depl
 
 ```mermaid
 flowchart TD
-    A["1 ── Brainstorm\nDecompose assessment\nIdentify screens, API, deliverables"]
-    B["2 ── Competitor Research\n7 OTAs studied and scored\nSkyscanner selected as primary reference"]
-    C["3 ── Tech Stack Research\nCompare: Zustand vs Redux vs Jotai\nRHF+Zod vs Formik\nshadcn/ui vs MUI"]
-    D["4 ── API & Library Research\nLive-test all 6 Duffel endpoints\nMap TypeScript types from responses\nDiscover return_offers=false requirement"]
-    E["5 ── Plan\nWrite 12 implementation plan files\nRouting, tokens, data layer,\nroute guards, animations, responsive"]
-    F["6 ── Architecture Gate\nfrontend-architect reviews component\nhierarchy and rendering strategy\nComponent split locked before coding"]
-    G["7 ── Implement\nPhase by phase:\nSearch → Results → Passengers → Confirmation\nServer Actions, Route Handlers, i18n"]
-    H["8 ── Code Review\ncode-reviewer agent audits:\nTypeScript correctness\nAccessibility\nCode quality"]
-    I["9 ── Test & Fix\nEnd-to-end booking flow tested\nEdge cases: expiry, price change,\nhydration mismatch, round-trip filters"]
-    J["10 ── Deploy\nVercel deployment\nDUFFEL_API_KEY set in env vars\nLive URL verified end-to-end"]
+    subgraph RESEARCH["Phases 1–4 · Research"]
+        A["1 — Brainstorm\nDecompose assessment\nScreens · API · deliverables"]
+        B["2 — Competitor Research\n7 OTAs studied and scored\nSkyscanner → primary reference"]
+        C["3 — Tech Stack Research\nZustand · RHF+Zod · shadcn/ui\nEach chosen with documented rationale"]
+        D["4 — API Research\nLive-test 6 Duffel endpoints\nMap TypeScript types · discover constraints"]
+    end
+
+    subgraph PLANNING["Phases 5–6 · Planning"]
+        E["5 — Plan\n12 implementation plan files\nRouting · tokens · data layer · animations"]
+        F["6 — Architecture Gate\nfrontend-architect locks component split\nRendering strategy · state shape · SSR guards"]
+    end
+
+    subgraph BUILD["Phases 7–8 · Build"]
+        G["7 — Implement\nSearch → Results → Passengers → Confirmation\nServer Actions · Route Handlers · i18n"]
+        H["8 — Code Review\nTypeScript · Accessibility · Code quality\nAll issues resolved before testing"]
+    end
+
+    subgraph VERIFY["Phases 9–10 · Verify & Ship"]
+        I["9 — Test & Fix\nEnd-to-end booking flow\nEdge cases · mobile · round-trip · i18n"]
+        J["10 — Deploy\nVercel · DUFFEL_API_KEY in env vars\nLive URL verified end-to-end"]
+    end
 
     A --> B --> C --> D --> E --> F --> G --> H --> I --> J
+
+    style RESEARCH fill:#EFF6FF,stroke:#3B82F6,color:#1E3A5F
+    style PLANNING fill:#F0FDF4,stroke:#22C55E,color:#14532D
+    style BUILD   fill:#FFF7ED,stroke:#F97316,color:#7C2D12
+    style VERIFY  fill:#FDF4FF,stroke:#A855F7,color:#581C87
 ```
 
 ---

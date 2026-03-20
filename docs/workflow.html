@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Development Workflow — SkyBook</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #F8FAFC;
+      color: #1E293B;
+      line-height: 1.6;
+    }
+
+    /* ── Header ── */
+    header {
+      background: linear-gradient(135deg, #0F172A 0%, #1E3A5F 100%);
+      color: #fff;
+      padding: 48px 64px 40px;
+    }
+    header h1 { font-size: 2rem; font-weight: 700; letter-spacing: -0.5px; }
+    header p  { margin-top: 8px; color: #94A3B8; font-size: 1rem; }
+
+    /* ── Layout ── */
+    .container { padding: 48px 32px 80px; }
+
+    /* ── Section headings ── */
+    h2 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #0F172A;
+      margin: 48px 0 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #E2E8F0;
+    }
+
+    /* ── Diagram card ── */
+    .diagram-card {
+      background: #fff;
+      border: 1px solid #E2E8F0;
+      border-radius: 16px;
+      padding: 36px 24px;
+      box-shadow: 0 1px 4px rgba(0,0,0,.06);
+      overflow-x: auto;
+    }
+    .diagram-card .mermaid { display: flex; justify-content: center; }
+
+    /* ── Phase legend strip ── */
+    .legend {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 32px;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: .8rem;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 99px;
+      border: 1.5px solid;
+    }
+    .legend-item.research  { background:#EFF6FF; border-color:#3B82F6; color:#1D4ED8; }
+    .legend-item.planning  { background:#F0FDF4; border-color:#22C55E; color:#15803D; }
+    .legend-item.build     { background:#FFF7ED; border-color:#F97316; color:#C2410C; }
+    .legend-item.verify    { background:#FDF4FF; border-color:#A855F7; color:#7E22CE; }
+    .legend-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: currentColor;
+    }
+
+    /* ── Phase cards grid ── */
+    .phases-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .phase-card {
+      background: #fff;
+      border: 1px solid #E2E8F0;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0,0,0,.05);
+      transition: box-shadow .15s;
+    }
+    .phase-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.1); }
+
+    .phase-card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 18px;
+      border-bottom: 1px solid #F1F5F9;
+    }
+    .phase-num {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .75rem; font-weight: 800;
+      flex-shrink: 0;
+    }
+    .phase-card-header h3 { font-size: .95rem; font-weight: 700; color: #0F172A; }
+    .phase-card-header .tag {
+      margin-left: auto;
+      font-size: .7rem;
+      font-weight: 600;
+      padding: 3px 9px;
+      border-radius: 99px;
+    }
+
+    .phase-card-body { padding: 14px 18px; }
+    .phase-card-body .goal {
+      font-size: .82rem;
+      color: #475569;
+      margin-bottom: 10px;
+    }
+    .phase-card-body ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .phase-card-body ul li {
+      font-size: .8rem;
+      color: #64748B;
+      padding-left: 14px;
+      position: relative;
+    }
+    .phase-card-body ul li::before {
+      content: "▸";
+      position: absolute;
+      left: 0;
+      color: #CBD5E1;
+    }
+    .output-badge {
+      margin-top: 12px;
+      font-size: .75rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 6px;
+      display: inline-block;
+    }
+
+    /* Phase colour schemes */
+    .research .phase-num  { background:#DBEAFE; color:#1D4ED8; }
+    .research .tag        { background:#DBEAFE; color:#1D4ED8; }
+    .research .output-badge { background:#EFF6FF; color:#1D4ED8; border:1px solid #BFDBFE; }
+
+    .planning .phase-num  { background:#DCFCE7; color:#15803D; }
+    .planning .tag        { background:#DCFCE7; color:#15803D; }
+    .planning .output-badge { background:#F0FDF4; color:#15803D; border:1px solid #BBF7D0; }
+
+    .build .phase-num     { background:#FFEDD5; color:#C2410C; }
+    .build .tag           { background:#FFEDD5; color:#C2410C; }
+    .build .output-badge  { background:#FFF7ED; color:#C2410C; border:1px solid #FED7AA; }
+
+    .verify .phase-num    { background:#F3E8FF; color:#7E22CE; }
+    .verify .tag          { background:#F3E8FF; color:#7E22CE; }
+    .verify .output-badge { background:#FDF4FF; color:#7E22CE; border:1px solid #E9D5FF; }
+
+    /* ── Key learnings ── */
+    .learnings { display: flex; flex-direction: column; gap: 14px; }
+    .learning-item {
+      display: flex;
+      gap: 16px;
+      background: #fff;
+      border: 1px solid #E2E8F0;
+      border-radius: 10px;
+      padding: 16px 20px;
+    }
+    .learning-num {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #CBD5E1;
+      flex-shrink: 0;
+      width: 28px;
+    }
+    .learning-item strong { color: #0F172A; }
+    .learning-item p { font-size: .875rem; color: #475569; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Development Workflow — SkyBook</h1>
+  <p>10-phase process · Assessment → Research → Plan → Build → Deploy</p>
+</header>
+
+<div class="container">
+
+  <!-- ── Diagram ── -->
+  <h2>Workflow Diagram</h2>
+
+  <div class="legend">
+    <span class="legend-item research"><span class="legend-dot"></span>Phases 1–4 · Research</span>
+    <span class="legend-item planning"><span class="legend-dot"></span>Phases 5–6 · Planning</span>
+    <span class="legend-item build"   ><span class="legend-dot"></span>Phases 7–8 · Build</span>
+    <span class="legend-item verify"  ><span class="legend-dot"></span>Phases 9–10 · Verify &amp; Ship</span>
+  </div>
+
+  <div class="diagram-card">
+    <div class="mermaid">
+flowchart TD
+    subgraph RESEARCH["Phases 1–4 · Research"]
+        A["1 — Brainstorm\nDecompose assessment\nScreens · API · deliverables"]
+        B["2 — Competitor Research\n7 OTAs studied and scored\nSkyscanner → primary reference"]
+        C["3 — Tech Stack Research\nZustand · RHF+Zod · shadcn/ui\nEach chosen with documented rationale"]
+        D["4 — API Research\nLive-test 6 Duffel endpoints\nMap TypeScript types · discover constraints"]
+    end
+
+    subgraph PLANNING["Phases 5–6 · Planning"]
+        E["5 — Plan\n12 implementation plan files\nRouting · tokens · data layer · animations"]
+        F["6 — Architecture Gate\nfrontend-architect locks component split\nRendering strategy · state shape · SSR guards"]
+    end
+
+    subgraph BUILD["Phases 7–8 · Build"]
+        G["7 — Implement\nSearch → Results → Passengers → Confirmation\nServer Actions · Route Handlers · i18n"]
+        H["8 — Code Review\nTypeScript · Accessibility · Code quality\nAll issues resolved before testing"]
+    end
+
+    subgraph VERIFY["Phases 9–10 · Verify & Ship"]
+        I["9 — Test & Fix\nEnd-to-end booking flow\nEdge cases · mobile · round-trip · i18n"]
+        J["10 — Deploy\nVercel · DUFFEL_API_KEY in env vars\nLive URL verified end-to-end"]
+    end
+
+    A --> B --> C --> D --> E --> F --> G --> H --> I --> J
+
+    style RESEARCH fill:#EFF6FF,stroke:#3B82F6,color:#1E3A5F
+    style PLANNING fill:#F0FDF4,stroke:#22C55E,color:#14532D
+    style BUILD    fill:#FFF7ED,stroke:#F97316,color:#7C2D12
+    style VERIFY   fill:#FDF4FF,stroke:#A855F7,color:#581C87
+    </div>
+  </div>
+
+  <!-- ── Phase cards ── -->
+  <h2>Phase-by-Phase Breakdown</h2>
+
+  <div class="phases-grid">
+
+    <!-- Phase 1 -->
+    <div class="phase-card research">
+      <div class="phase-card-header">
+        <span class="phase-num">1</span>
+        <h3>Brainstorm</h3>
+        <span class="tag">Research</span>
+      </div>
+      <div class="phase-card-body">
+        <p class="goal">Understand exactly what needs to be built before any research begins.</p>
+        <ul>
+          <li>Read the assessment in full; annotate every requirement</li>
+          <li>Decompose into deliverables: 4 screens, Duffel API, docs, deployment</li>
+          <li>Identify unknowns: endpoints needed, state that persists across screens</li>
+          <li>Define "done" for each screen</li>
+        </ul>
+        <span class="output-badge">Output: Requirements checklist · scope decisions</span>
+      </div>
+    </div>
+
+    <!-- Phase 2 -->
+    <div class="phase-card research">
+      <div class="phase-card-header">
+        <span class="phase-num">2</span>
+        <h3>Competitor Research</h3>
+        <span class="tag">Research</span>
+      </div>
+      <div class="phase-card-body">
+        <p class="goal">Understand how production OTAs solve the same UX problems before designing anything.</p>
+        <ul>
+          <li>Tested 7 platforms: Google Flights, Skyscanner, Expedia, AirAsia, Booking.com, Kayak, Trip.com</li>
+          <li>Measured load time, booking time, UX score, design style</li>
+          <li>Identified patterns to adopt and patterns to avoid</li>
+        </ul>
+        <span class="output-badge">Output: 4-research-ui-ux.md · competitor-analysis.md</span>
+      </div>
+    </div>
+
+    <!-- Phase 3 -->
+    <div class="phase-card research">
+      <div class="phase-card-header">
+        <span class="phase-num">3</span>
+        <h3>Tech Stack Research</h3>
+        <span class="tag">Research</span>
+      </div>
+      <div class="phase-card-body">
+        <p class="goal">Select libraries with clear rationale, not defaults.</p>
+        <ul>
+          <li>Zustand over Redux — 2 KB vs 25 KB, no boilerplate</li>
+          <li>React Hook Form + Zod — no re-render per keystroke, runtime + static types</li>
+          <li>shadcn/ui — Radix UI a11y primitives, no vendor lock-in</li>
+          <li>Raw fetch — 98% smaller than SDK; readable and debuggable</li>
+        </ul>
+        <span class="output-badge">Output: 3-research-overview-frontend.md</span>
+      </div>
+    </div>
+
+    <!-- Phase 4 -->
+    <div class="phase-card research">
+      <div class="phase-card-header">
+        <span class="phase-num">4</span>
+        <h3>API &amp; Library Research</h3>
+        <span class="tag">Research</span>
+      </div>
+      <div class="phase-card-body">
+        <p class="goal">Understand the Duffel API deeply before writing any integration code.</p>
+        <ul>
+          <li>Live-tested all 6 Duffel endpoints in the booking flow</li>
+          <li>Mapped TypeScript interfaces from live response shapes</li>
+          <li>Discovered: round-trip returns 1,638 results inline → <code>return_offers=false</code> required</li>
+          <li>Verified <code>passengerIds[]</code> must be stored verbatim in the order payload</li>
+        </ul>
+        <span class="output-badge">Output: 2-duffel-api-exploration.md</span>
+      </div>
+    </div>
+
+    <!-- Phase 5 -->
+    <div class="phase-card planning">
+      <div class="phase-card-header">
+        <span class="phase-num">5</span>
+        <h3>Plan</h3>
+        <span class="tag">Planning</span>
+      </div>
+      <div class="phase-card-body">
+        <p class="goal">Produce detailed implementation plans before writing any production code.</p>
+        <ul>
+          <li>00-architecture.md — component hierarchy, rendering strategy</li>
+          <li>01-tailwind-config.md — design tokens, color system</li>
+          <li>04-data-layer.md — Server Actions, Route Handlers</li>
+          <li>05-route-guards-persistence.md — Zustand store shape, session persistence</li>
+          <li>+ 8 more plan files covering forms, layout, animations, responsive</li>
+        </ul>
+        <span class="output-badge">Output: 12 implementation plan files</span>
+      </div>
+    </div>
+
+    <!-- Phase 6 -->
+    <div class="phase-card planning">
+      <div class="phase-card-header">
+        <span class="phase-num">6</span>
+        <h3>Architecture Gate</h3>
+        <span class="tag">Planning</span>
+      </div>
+      <div class="phase-card-body">
+        <p class="goal">Lock architecture before implementation to prevent expensive structural rework.</p>
+        <ul>
+          <li>frontend-architect agent reviewed component hierarchy and rendering strategy</li>
+          <li>TanStack Query removed — Server Actions made it redundant</li>
+          <li><code>useHydrated()</code> pattern added — SSR hydration risk flagged</li>
+          <li>Server Actions for mutations; Route Handlers for client fetching</li>
+        </ul>
+        <span class="output-badge">Output: Final 00-architecture.md (locked)</span>
+      </div>
+    </div>
+
+    <!-- Phase 7 -->
+    <div class="phase-card build">
+      <div class="phase-card-header">
+        <span class="phase-num">7</span>
+        <h3>Implement</h3>
+        <span class="tag">Build</span>
+      </div>
+      <div class="phase-card-body">
+        <p class="goal">Build all 4 screens following the locked architecture.</p>
+        <ul>
+          <li>Foundation: Tailwind tokens, shadcn/ui, Zustand store, duffelFetch, i18n</li>
+          <li>F1 Search: AirportCombobox, DateRangePicker, PassengerSelector, SearchForm</li>
+          <li>F2 Results: ResultsList, FlightCard, FilterPanel, SortBar, useFilteredOffers</li>
+          <li>F3 Passengers: PassengerForm, BookingSummary, OfferExpiryGuard, createOrder()</li>
+          <li>F4 Confirmation: ConfirmationCard, Server Component direct Duffel fetch</li>
+        </ul>
+        <span class="output-badge">Output: 40+ components · 3 Server Actions · 2 Route Handlers</span>
+      </div>
+    </div>
+
+    <!-- Phase 8 -->
+    <div class="phase-card build">
+      <div class="phase-card-header">
+        <span class="phase-num">8</span>
+        <h3>Code Review</h3>
+        <span class="tag">Build</span>
+      </div>
+      <div class="phase-card-body">
+        <p class="goal">Catch issues before testing — TypeScript, accessibility, code quality.</p>
+        <ul>
+          <li>TypeScript strictness: no <code>any</code>, correct Duffel type mappings</li>
+          <li>Accessibility: ARIA labels, keyboard nav, focus management, color contrast</li>
+          <li>Code quality: no dead code, consistent naming, no prop drilling, server-only boundaries</li>
+        </ul>
+        <span class="output-badge">Output: Issues list → all fixed before testing</span>
+      </div>
+    </div>
+
+    <!-- Phase 9 -->
+    <div class="phase-card verify">
+      <div class="phase-card-header">
+        <span class="phase-num">9</span>
+        <h3>Test &amp; Fix</h3>
+        <span class="tag">Verify &amp; Ship</span>
+      </div>
+      <div class="phase-card-body">
+        <p class="goal">Verify the end-to-end booking flow in a real browser with live Duffel test API calls.</p>
+        <ul>
+          <li>Full flow: Search → select → passenger form → confirm → confirmation</li>
+          <li>Edge cases: offer expiry, price change, back-navigation after booking</li>
+          <li>Round-trip: outbound + return displayed correctly</li>
+          <li>Mobile, i18n, filter drawer verified</li>
+        </ul>
+        <span class="output-badge">Output: 3 bugs found and fixed</span>
+      </div>
+    </div>
+
+    <!-- Phase 10 -->
+    <div class="phase-card verify">
+      <div class="phase-card-header">
+        <span class="phase-num">10</span>
+        <h3>Deploy</h3>
+        <span class="tag">Verify &amp; Ship</span>
+      </div>
+      <div class="phase-card-body">
+        <p class="goal">Verified working deployment on Vercel.</p>
+        <ul>
+          <li>Connected GitHub repository to Vercel</li>
+          <li>Set <code>DUFFEL_API_KEY</code> in Vercel environment variables</li>
+          <li>Triggered deployment via <code>git push origin master</code></li>
+          <li>Verified live URL end-to-end: search → booking confirmation</li>
+        </ul>
+        <span class="output-badge">Output: flight-explorer-twenty-six.vercel.app/en</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── Key Learnings ── -->
+  <h2>Key Learnings</h2>
+  <div class="learnings">
+    <div class="learning-item">
+      <span class="learning-num">01</span>
+      <p><strong>Research before planning, plan before coding.</strong> The 12 implementation plan files took ~20% of total time but prevented multiple expensive architectural decisions from being made incorrectly mid-implementation.</p>
+    </div>
+    <div class="learning-item">
+      <span class="learning-num">02</span>
+      <p><strong>Architecture gate catches expensive issues early.</strong> The <code>useHydrated()</code> pattern and the removal of TanStack Query were both caught at the architecture gate, not during implementation.</p>
+    </div>
+    <div class="learning-item">
+      <span class="learning-num">03</span>
+      <p><strong>Live API testing is non-negotiable.</strong> The <code>return_offers=false</code> requirement was only discoverable through live testing, not documentation. TypeScript types were more accurate from live responses than from docs.</p>
+    </div>
+    <div class="learning-item">
+      <span class="learning-num">04</span>
+      <p><strong>Competitor research influences concrete decisions.</strong> The choice of Skyscanner's color system (<code>#0770E3</code>), 52px input sizing, and filter panel placement came directly from 7-OTA research, not from default choices.</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'base',
+    themeVariables: {
+      primaryColor: '#EFF6FF',
+      primaryBorderColor: '#3B82F6',
+      primaryTextColor: '#1E3A5F',
+      lineColor: '#94A3B8',
+      fontSize: '13px',
+    },
+  });
+</script>
+
+</body>
+</html>

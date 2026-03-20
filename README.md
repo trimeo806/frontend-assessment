@@ -78,8 +78,12 @@ Full technical and process documentation is in the [`docs/`](./docs/) directory:
 | Document | What it covers |
 |----------|----------------|
 | [docs/index.md](./docs/index.md) | Documentation index — brief description of each document |
-| [docs/architecture.md](./docs/architecture.md) | System architecture, library choices and rationale, rendering strategy, state management, route guard pattern |
+| [docs/architecture.html](./docs/architecture.html) ★ | **System architecture (rendered)** — 4 Mermaid diagrams: system layers, booking sequence, Zustand store, component tree |
+| [docs/architecture.md](./docs/architecture.md) | System architecture source — library choices, rendering strategy, state management, route guard pattern |
+| [docs/workflow.html](./docs/workflow.html) ★ | **Development workflow (rendered)** — 10-phase flowchart with colour-coded groups, phase cards, key learnings |
+| [docs/workflow.md](./docs/workflow.md) | Development workflow source — 10-phase process from brainstorm to deployment |
 | [docs/competitive-research.md](./docs/competitive-research.md) | 7 OTA platforms studied, Skyscanner as primary reference, patterns adopted and deliberately avoided |
 | [docs/ai-tools.md](./docs/ai-tools.md) | Claude Code + tri_ai_kit usage, which agents handled which phases, concrete examples of where AI helped most |
 | [docs/ai-kit.md](./docs/ai-kit.md) | tri_ai_kit internals — skills vs agents distinction, every skill and agent used, what each produced |
-| [docs/workflow.md](./docs/workflow.md) | 10-phase development workflow with diagram — from brainstorm to deployment |
+
+> ★ Open in any browser — diagrams render without extensions.
