@@ -4,7 +4,7 @@ A full-stack flight booking application built with Next.js and the Duffel Flight
 
 ## Live Demo
 
-https://sky-book.vercel.app
+https://flight-explorer-twenty-six.vercel.app/en
 
 ## Features
 
@@ -19,16 +19,16 @@ https://sky-book.vercel.app
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|-----------|
-| Framework | Next.js 15, React 19 |
-| Language | TypeScript |
-| Styling | Tailwind CSS v4, shadcn/ui |
-| State | Zustand |
+| Layer      | Technology                       |
+| ---------- | -------------------------------- |
+| Framework  | Next.js 15, React 19             |
+| Language   | TypeScript                       |
+| Styling    | Tailwind CSS v4, shadcn/ui       |
+| State      | Zustand                          |
 | Animations | Framer Motion (motion/react v12) |
-| i18n | next-intl |
-| API | Duffel Flights API |
-| Deployment | Vercel |
+| i18n       | next-intl                        |
+| API        | Duffel Flights API               |
+| Deployment | Vercel                           |
 
 ## Prerequisites
 
@@ -39,27 +39,32 @@ https://sky-book.vercel.app
 ## Setup
 
 1. Clone the repository:
+
    ```bash
    git clone <repository-url>
-   cd easyGDS/assessments/frontend
+   cd /frontend
    ```
 
 2. Install dependencies:
+
    ```bash
    npm install
    ```
 
 3. Copy the environment template:
+
    ```bash
    cp .env.example .env.local
    ```
 
 4. Add your Duffel test API key to `.env.local`:
+
    ```
    DUFFEL_API_KEY=your_test_key_here
    ```
 
 5. Start the development server:
+
    ```bash
    npm run dev
    ```
@@ -68,4 +73,12 @@ https://sky-book.vercel.app
 
 ## Documentation
 
-See `ARCHITECTURE.md` for architectural decisions, competitor analysis, and AI tool usage.
+Full technical and process documentation is in the [`docs/`](./docs/) directory:
+
+| Document | What it covers |
+|----------|----------------|
+| [docs/index.md](./docs/index.md) | Documentation index — brief description of each document |
+| [docs/architecture.md](./docs/architecture.md) | System architecture, library choices and rationale, rendering strategy, state management, route guard pattern |
+| [docs/competitive-research.md](./docs/competitive-research.md) | 7 OTA platforms studied, Skyscanner as primary reference, patterns adopted and deliberately avoided |
+| [docs/ai-tools.md](./docs/ai-tools.md) | Claude Code + tri_ai_kit usage, which agents handled which phases, concrete examples of where AI helped most |
+| [docs/workflow.md](./docs/workflow.md) | 10-phase development workflow with diagram — from brainstorm to deployment |
