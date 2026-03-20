@@ -429,3 +429,7 @@
 {"ts":"2026-03-20T08:25:47.646Z","hook":"scout-block","status":"crash","error":"path must not be empty"}
 {"ts":"2026-03-20T08:25:48.523Z","hook":"scout-block","status":"crash","error":"path must not be empty"}
 {"ts":"2026-03-20T09:21:19.771Z","hook":"scout-block","status":"crash","error":"path must not be empty"}
+{"ts":"2026-03-20T09:32:52.793Z","hook":"scout-block","status":"crash","error":"path must not be empty"}
+{"ts":"2026-03-20T09:33:49.972Z","hook":"scout-block","status":"crash","error":"path must not be empty"}
+{"ts":"2026-03-20T09:34:03.743Z","hook":"scout-block","status":"crash","error":"path must not be empty"}
+{"ts":"2026-03-20T09:35:06.579Z","hook":"scout-block","status":"crash","error":"path must not be empty"}

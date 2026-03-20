@@ -78,7 +78,15 @@ export const singlePassengerSchema = z.object({
     ),
   gender:      z.enum(["m", "f"]),
   email:       z.string().email("Enter a valid email"),
-  phone:       z.string().min(7, "Enter a valid phone number"),
+  phone:       z.string().regex(/^\+\d{7,15}$/, "Use international format e.g. +60123456789"),
+  identity_document: z.object({
+    type:                 z.literal("passport"),
+    number:               z.string().min(3, "Passport number required"),
+    issuing_country_code: z.string().length(2, "Enter 2-letter country code").transform(s => s.toUpperCase()),
+    expires_on:           z.string()
+      .min(1, "Expiry date required")
+      .refine(d => !isNaN(Date.parse(d)) && new Date(d) > new Date(), "Passport must not be expired"),
+  }).optional(),
 })
 
 export const passengerFormSchema = z.object({

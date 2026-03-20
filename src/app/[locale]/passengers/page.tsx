@@ -16,7 +16,7 @@ export default async function PassengersPage() {
     <div className="flex flex-col bg-secondary">
       <RequireSelectedOffer>
         <OfferExpiryGuard />
-        <main className="flex-1 mx-auto w-full max-w-300 px-4 py-6">
+        <main className="flex-1 mx-auto w-full max-w-300 px-4 py-6 pb-20 lg:pb-6">
           <div className="mb-6 rounded-xl bg-primary px-4 py-3 flex justify-center shadow-sm">
             <ProgressStepper step={3} />
           </div>

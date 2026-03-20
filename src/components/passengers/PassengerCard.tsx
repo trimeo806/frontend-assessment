@@ -9,9 +9,9 @@ import type { PassengerFormValues } from "@/lib/types/forms"
 import { User } from "lucide-react"
 import { DateOfBirthPicker } from "./DateOfBirthPicker"
 
-interface Props { index: number; label: string }
+interface Props { index: number; label: string; requiresPassport?: boolean }
 
-export function PassengerCard({ index, label }: Props) {
+export function PassengerCard({ index, label, requiresPassport }: Props) {
   const t = useTranslations("passengers")
   const { register, control, formState: { errors } } = useFormContext<PassengerFormValues>()
   const paxErrors = errors.passengers?.[index]
@@ -149,13 +149,69 @@ export function PassengerCard({ index, label }: Props) {
             <Input
               {...register(`passengers.${index}.phone`)}
               type="tel"
-              placeholder={t("phonePlaceholder")}
+              placeholder={"+60123456789"}
               className="h-10"
             />
             {paxErrors?.phone && (
               <p className="text-xs text-error mt-1">{paxErrors.phone.message}</p>
             )}
           </div>
+
+          {/* Travel Document */}
+          {requiresPassport && (
+            <>
+              <p className="sm:col-span-2 text-xs font-semibold text-muted-foreground uppercase tracking-wide mt-2">
+                Travel Document
+              </p>
+
+              {/* Passport number */}
+              <div>
+                <Label className="text-xs mb-1.5 block">{t("passportNumber")}</Label>
+                <Input
+                  {...register(`passengers.${index}.identity_document.number`)}
+                  placeholder={t("passportNumberPlaceholder")}
+                  className="h-10"
+                />
+                {paxErrors?.identity_document?.number && (
+                  <p className="text-xs text-error mt-1">{paxErrors.identity_document.number.message}</p>
+                )}
+              </div>
+
+              {/* Issuing country code */}
+              <div>
+                <Label className="text-xs mb-1.5 block">{t("issuingCountry")}</Label>
+                <Input
+                  {...register(`passengers.${index}.identity_document.issuing_country_code`)}
+                  placeholder="MY"
+                  maxLength={2}
+                  className="h-10 uppercase"
+                />
+                {paxErrors?.identity_document?.issuing_country_code && (
+                  <p className="text-xs text-error mt-1">{paxErrors.identity_document.issuing_country_code.message}</p>
+                )}
+              </div>
+
+              {/* Expiry date — hidden type field */}
+              <input
+                type="hidden"
+                {...register(`passengers.${index}.identity_document.type`)}
+                value="passport"
+              />
+
+              {/* Expiry date */}
+              <div className="sm:col-span-2">
+                <Label className="text-xs mb-1.5 block">{t("passportExpiry")}</Label>
+                <Input
+                  {...register(`passengers.${index}.identity_document.expires_on`)}
+                  type="date"
+                  className="h-10"
+                />
+                {paxErrors?.identity_document?.expires_on && (
+                  <p className="text-xs text-error mt-1">{paxErrors.identity_document.expires_on.message}</p>
+                )}
+              </div>
+            </>
+          )}
         </div>
       </AccordionContent>
     </AccordionItem>

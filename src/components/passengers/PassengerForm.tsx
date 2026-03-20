@@ -30,6 +30,7 @@ export function PassengerForm() {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
   const { selectedOffer, passengerIds, setOrderId } = useFlightStore()
+  const requiresPassport = useFlightStore(s => s.selectedOffer?.passenger_identity_documents_required ?? false)
 
   const paxCount = passengerIds.length
   const methods = useForm<PassengerFormValues>({
@@ -86,13 +87,13 @@ export function PassengerForm() {
         >
           {reduced ? (
             Array.from({ length: paxCount }, (_, i) => (
-              <PassengerCard key={i} index={i} label={paxLabels[i] ?? t("passenger", { n: i + 1 })} />
+              <PassengerCard key={i} index={i} label={paxLabels[i] ?? t("passenger", { n: i + 1 })} requiresPassport={requiresPassport} />
             ))
           ) : (
             <m.div variants={listVariants} initial="hidden" animate="visible">
               {Array.from({ length: paxCount }, (_, i) => (
                 <m.div key={i} variants={itemVariants}>
-                  <PassengerCard index={i} label={paxLabels[i] ?? t("passenger", { n: i + 1 })} />
+                  <PassengerCard index={i} label={paxLabels[i] ?? t("passenger", { n: i + 1 })} requiresPassport={requiresPassport} />
                 </m.div>
               ))}
             </m.div>

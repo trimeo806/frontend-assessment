@@ -1,5 +1,8 @@
+import type { Metadata } from "next"
 import { RequireOfferRequest } from "@/components/shared/RequireOfferRequest"
 import { ResultsList } from "@/components/results/ResultsList"
+
+export const metadata: Metadata = { title: "Search Results \u2014 SkyBook" }
 
 export default async function ResultsPage({
   searchParams,

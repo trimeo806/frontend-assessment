@@ -1,8 +1,11 @@
+import type { Metadata } from "next"
 import { getTranslations } from "next-intl/server"
 import { SearchForm } from "@/components/search/SearchForm"
 import { PopularDestinationsGrid } from "@/components/search/PopularDestinationsGrid"
 import { AnimatedSection } from "@/components/shared/AnimatedSection"
 import { getPopularDestinations } from "@/lib/destinations"
+
+export const metadata: Metadata = { title: "SkyBook \u2014 Find Cheap Flights" }
 
 export default async function SearchPage() {
   const [t, destinations] = await Promise.all([

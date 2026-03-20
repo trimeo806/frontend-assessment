@@ -12,6 +12,13 @@ interface PassengerInput {
   gender:      string
   email:       string
   phone:       string
+  identity_document?: {
+    type:                 string
+    number:               string
+    issuing_country_code: string
+    expires_on:           string
+    unique_identifier?:   string
+  }
 }
 
 interface CreateOrderParams {
@@ -42,6 +49,7 @@ export async function createOrder(
         gender:       pax.gender,
         email:        pax.email,
         phone_number: pax.phone,
+        ...(pax.identity_document ? { identity_documents: [pax.identity_document] } : {}),
       })),
     },
   }
