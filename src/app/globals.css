@@ -1,0 +1,196 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+@config "../../tailwind.config.ts";
+
+@theme {
+  /* Primary brand zone (#0770E3 blue) */
+  --color-primary: #0770E3;
+  --color-primary-foreground: #FFFFFF;
+
+  /* Secondary surface zone (#F1F2F8 gray) */
+  --color-secondary: #F1F2F8;
+  --color-secondary-foreground: #000000;
+
+  /* Border */
+  --color-border: #E6E6E6;
+
+  /* Status */
+  --color-success: #00A698;
+  --color-warning: #FF7733;
+  --color-error: #E20A17;
+
+  /* Highlight tokens */
+  --color-highlight-primary: #FFFFFF;
+  --color-highlight-primary-fg: #0770E3;
+  --color-highlight-secondary: #0770E3;
+  --color-highlight-secondary-fg: #FFFFFF;
+
+  /* Gradient dark variant */
+  --color-primary-dark: #084EB2;
+
+  /* Surface tokens */
+  --color-background: #FFFFFF;
+  --color-foreground: #000000;
+  --color-popover: #FFFFFF;
+  --color-popover-foreground: #000000;
+
+  /* Muted / accent */
+  --color-muted: #F1F2F8;
+  --color-muted-foreground: #68707E;
+  --color-accent: #F1F2F8;
+  --color-accent-foreground: #000000;
+
+  /* Input & focus ring */
+  --color-input: #E6E6E6;
+  --color-ring: #0770E3;
+
+  /* Destructive (already covered by --color-error but components use "destructive" naming) */
+  --color-destructive: #E20A17;
+}
+
+@layer base {
+  :root {
+    /* ── Flight app color tokens (legacy aliases kept for custom utilities) ── */
+    --bg-primary:        var(--color-primary);
+    --text-primary:      var(--color-primary-foreground);
+    --bg-secondary:      var(--color-secondary);
+    --text-secondary:    var(--color-secondary-foreground);
+    --border:            var(--color-border);
+    --success:           var(--color-success);
+    --warning:           var(--color-warning);
+    --error:             var(--color-error);
+    --badge-ok-bg:       #E8F5F4;
+    --badge-ok-fg:       #00A698;
+    --badge-ok-border:   #00A698;
+    --badge-warn-bg:     #FFF0E8;
+    --badge-warn-fg:     #FF7733;
+    --badge-warn-border: #FF7733;
+    /* Highlight tokens — flip bg/text of the parent zone */
+    --bg-highlight-primary:      var(--color-highlight-primary);
+    --text-highlight-primary:    var(--color-highlight-primary-fg);
+    --bg-highlight-secondary:    var(--color-highlight-secondary);
+    --text-highlight-secondary:  var(--color-highlight-secondary-fg);
+    --radius: 0.5rem;
+
+    /* ── Spacing aliases ── */
+    --padding-xs:    8px;
+    --padding-sm:   16px;
+    --padding-md:   24px;
+    --padding-lg:   32px;
+    --padding-xl:   40px;
+    --gap-xs:        8px;
+    --gap-sm:        8px;
+    --gap-md:       16px;
+    --gap-lg:       24px;
+    --gap-xl:       32px;
+    --height-input: 48px;
+    --height-btn:   48px;
+    --height-btn-sm:40px;
+  }
+
+  * { border-color: var(--color-border); }
+  body {
+    background: var(--color-secondary);
+    color: var(--color-secondary-foreground);
+    font-family: "Inter", system-ui, sans-serif;
+  }
+}
+
+@layer utilities {
+  /* Skeleton shimmer */
+  .skeleton-shimmer {
+    background: linear-gradient(
+      90deg,
+      var(--color-secondary) 25%,
+      #E4E5EB 50%,
+      var(--color-secondary) 75%
+    );
+    background-size: 1000px 100%;
+    @apply animate-shimmer;
+  }
+
+  /* Stop badges */
+  .badge-nonstop {
+    background: var(--badge-ok-bg);
+    color: var(--badge-ok-fg);
+    border: 1px solid var(--badge-ok-border);
+    @apply inline-flex items-center rounded-full px-4 py-2 text-base font-semibold;
+  }
+  .badge-one-stop {
+    background: var(--badge-warn-bg);
+    color: var(--badge-warn-fg);
+    border: 1px solid var(--badge-warn-border);
+    @apply inline-flex items-center rounded-full px-4 py-2 text-base font-semibold;
+  }
+  .badge-multi-stop {
+    background: #FDECEA;
+    color: var(--color-error);
+    border: 1px solid var(--color-error);
+    @apply inline-flex items-center rounded-full px-4 py-2 text-base font-semibold;
+  }
+
+  /* Sort tabs — on blue (primary) bar */
+  .sort-tab-active {
+    @apply border-b-2 text-base font-semibold;
+    border-color: var(--color-highlight-primary);
+    color: var(--color-highlight-primary);
+  }
+  .sort-tab-inactive {
+    @apply border-b-2 border-transparent text-base font-medium;
+    color: rgba(255, 255, 255, 0.75);
+  }
+
+  /* Departure time chips — on white sidebar */
+  .time-chip {
+    @apply inline-flex items-center rounded-full px-4 text-base font-medium cursor-pointer;
+    height: 40px;
+    border: 1px solid var(--color-border);
+    background: var(--color-secondary);
+    color: var(--color-secondary-foreground);
+  }
+  .time-chip[data-active="true"],
+  .time-chip.active {
+    background: var(--color-highlight-secondary);
+    color: var(--color-highlight-secondary-fg);
+    border-color: var(--color-highlight-secondary);
+  }
+
+  /* Nav active link — on blue bar */
+  .nav-link-active {
+    color: var(--color-highlight-primary);
+    border-bottom: 2px solid var(--color-highlight-primary);
+    padding-bottom: 2px;
+  }
+
+  /* Progress stepper — on blue header */
+  .prog-dot-done,
+  .prog-dot-active {
+    @apply flex h-8 w-8 items-center justify-center rounded-full text-base font-bold;
+    background: var(--color-highlight-primary);
+    border: 2px solid var(--color-highlight-primary);
+    color: var(--color-highlight-primary-fg);
+  }
+  .prog-line-done {
+    background: var(--color-highlight-primary);
+  }
+
+  /* Autocomplete selected row — on white card */
+  .combobox-item-selected {
+    background: var(--color-highlight-secondary);
+    color: var(--color-highlight-secondary-fg);
+    @apply rounded;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration:        0.01ms !important;
+    animation-iteration-count: 1      !important;
+    transition-duration:       0.01ms !important;
+    scroll-behavior:           auto   !important;
+  }
+}
