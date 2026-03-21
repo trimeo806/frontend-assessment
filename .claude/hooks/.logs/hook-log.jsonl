@@ -460,3 +460,5 @@
 {"ts":"2026-03-20T17:07:23.069Z","hook":"scout-block","status":"crash","error":"path must not be empty"}
 {"ts":"2026-03-20T17:30:11.789Z","hook":"scout-block","status":"crash","error":"path must not be empty"}
 {"ts":"2026-03-21T07:04:59.883Z","hook":"scout-block","status":"crash","error":"path must not be empty"}
+{"ts":"2026-03-21T08:07:04.395Z","hook":"scout-block","status":"crash","error":"path must not be empty"}
+{"ts":"2026-03-21T08:07:04.615Z","hook":"scout-block","status":"crash","error":"path must not be empty"}

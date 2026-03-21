@@ -259,3 +259,14 @@ Manually visiting and interacting with 7 OTAs was done by the developer, not AI.
 **Error message copy**
 
 Every user-facing error message was written by the developer, not AI. AI provided the error code mapping (`offer_expired`, `price_changed`, `invalid_passenger_name`); developer wrote the plain-language copy that a traveler would understand.
+
+---
+
+## Related Documents
+
+| Document | Relationship |
+| --- | --- |
+| [docs/ai-kit.md](./ai-kit.md) | Deeper breakdown of every agent and skill used — what each one specifically produced, with the agent interaction map |
+| [docs/workflow.md](./workflow.md) | The 10-phase process — shows which agent ran in which phase and what it contributed |
+| [docs/architecture.md](./architecture.md) | The architectural output that the AI-assisted planning process produced |
+| [plans/260315-1200-flight-booking-app/](../plans/260315-1200-flight-booking-app/) | The planning artefacts that agents produced — research reports, implementation plans, and the architecture gate document |

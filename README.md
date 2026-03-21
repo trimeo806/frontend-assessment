@@ -107,6 +107,21 @@ The project was built in 10 phases across four groups. Full details in [docs/wor
 
 ---
 
+## For Reviewers
+
+If you're evaluating this project, here's the fastest path to each area:
+
+| What you want to understand | Where to look |
+| --- | --- |
+| How the app was built (10-phase process) | [docs/workflow.md](./docs/workflow.md) |
+| Architectural decisions and trade-offs | [docs/architecture.md](./docs/architecture.md) |
+| Competitor research that shaped the design | [docs/competitive-research.md](./docs/competitive-research.md) |
+| How AI tools were used (specific examples) | [docs/ai-tools.md](./docs/ai-tools.md) |
+| The multi-agent kit internals | [docs/ai-kit.md](./docs/ai-kit.md) |
+| Working documents from the planning phase | [plans/](./plans/) |
+
+---
+
 ## Documentation
 
 Full technical and process documentation is in the [`docs/`](./docs/) directory:
@@ -213,11 +228,64 @@ Work tracked in the gap resolution plan ([plans/260320-gap-resolution/plan.md](.
 
 ### Potential future enhancements
 
+#### UX & Features
+
 | Area | Description |
 | --- | --- |
-| Seat selection | Add seat map step between passenger details and confirmation |
-| Fare rules | Display baggage allowance and fare conditions on results and confirmation |
-| Price alerts | Notify users when tracked route prices drop |
-| User accounts | Save past searches and bookings with authentication |
-| Multi-city search | Support complex itineraries beyond one-way and round-trip |
+| Seat selection | Add seat map step between passenger details and confirmation using Duffel's seat selection API |
+| Fare rules | Display baggage allowance, change/cancel policy, and fare conditions on results and confirmation screens |
+| Price alerts | Notify users via email when tracked route prices drop; store search criteria in Supabase and poll Duffel on a schedule |
+| User accounts | Save past searches and bookings with Supabase Auth; pre-fill passenger details on return visits |
+| Multi-city search | Support complex itineraries beyond one-way and round-trip using Duffel's multi-leg offer request |
 | Payment integration | Add Stripe or Duffel Pay for real payment flow instead of test orders |
+| Recent searches | Persist last 5 searches in `localStorage` and surface them on the search screen for one-tap repeat |
+| Flight status | Surface real-time delay/cancellation info on the confirmation screen via a flight-status API |
+
+#### Performance
+
+| Area | Description |
+| --- | --- |
+| ISR caching | Cache popular route responses with Next.js ISR (`revalidate: 300`) to cut Duffel API round-trips and reduce TTFB by ~50% |
+| Image optimisation | Serve airline logos via `next/image` with AVIF format and `sizes` attribute; eliminate CLS caused by unsized images |
+| Bundle analysis | Add `@next/bundle-analyzer` to CI and set a size budget; tree-shake Framer Motion to `LazyMotion` + `domAnimation` subset only |
+| Font optimisation | Use `next/font` with `display: swap` and subset Latin + Chinese glyphs to reduce font payload by ~60% |
+
+#### Accessibility
+
+| Area | Description |
+| --- | --- |
+| WCAG 2.1 AA audit | Run axe-core in CI and resolve all Level A/AA violations; target contrast ratio ≥ 4.5:1 across all colour pairs |
+| Keyboard navigation | Ensure full tab-order coverage on the filter panel and date picker; add `focus-visible` ring styles to all interactive elements |
+| Screen reader labels | Add `aria-live="polite"` to flight result count and loading states so assistive tech announces updates without focus loss |
+
+#### Testing
+
+| Area | Description |
+| --- | --- |
+| E2E booking flow | Playwright tests covering the full Search → Results → Passengers → Confirmation path against the Duffel test environment |
+| Unit tests (Vitest) | Unit tests for Zustand store slices, Zod validation schemas, and Duffel Server Actions including error-path branches |
+| Lighthouse CI | Enforce performance budget (LCP < 2.5 s, CLS < 0.1, TBT < 200 ms) on every PR via `@lhci/cli` GitHub Action |
+
+#### Security
+
+| Area | Description |
+| --- | --- |
+| Content Security Policy | Add a strict `Content-Security-Policy` header in `next.config` to block XSS; restrict `connect-src` to `api.duffel.com` only |
+| Environment validation | Validate all `process.env` vars at startup with a Zod schema; fail fast in development rather than at runtime |
+| Rate limiting | Add an edge-middleware rate limiter (Upstash Redis + `@upstash/ratelimit`) on `/api/flights` to prevent API-key abuse |
+
+#### Observability & SEO
+
+| Area | Description |
+| --- | --- |
+| Vercel Analytics | Enable Vercel Web Analytics + Speed Insights; instrument booking funnel steps as custom events to measure drop-off |
+| Structured data | Add `FlightReservation` JSON-LD on the confirmation page and `Dataset` schema on results for Google rich results |
+| Error monitoring | Integrate Sentry with `@sentry/nextjs`; capture Duffel API errors with breadcrumbs and user-session context |
+
+#### Developer Experience
+
+| Area | Description |
+| --- | --- |
+| CI/CD pipeline | GitHub Actions workflow: lint → type-check → unit tests → Lighthouse CI → preview deploy on every PR |
+| Storybook | Document all shared UI components (`FlightCard`, `FilterPanel`, `PassengerForm`) in Storybook for visual regression testing |
+| PWA support | Add `next-pwa` (Serwist) with a network-first strategy for flight searches and offline fallback page |

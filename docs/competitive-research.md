@@ -598,3 +598,15 @@ Input border-radius: 4px
 Badge border-radius: 24px (pill)
 Airline logo:        32×32px
 ```
+
+---
+
+## Related Documents
+
+| Document | Relationship |
+| --- | --- |
+| [docs/workflow.md](./workflow.md) | Phase 2 of the development process — shows how this research fed into the planning and architecture phases |
+| [docs/architecture.md](./architecture.md) | The design tokens and component sizes from this document became the Tailwind CSS v4 `@theme` block in `globals.css` |
+| [plans/…/4-research-ui-ux.md](../plans/260315-1200-flight-booking-app/frontend/plans/4-research-ui-ux.md) | The UI/UX research plan produced alongside this analysis |
+| [plans/…/5-research-ui-ux-competitor-analysis.md](../plans/260315-1200-flight-booking-app/frontend/plans/5-research-ui-ux-competitor-analysis.md) | Extended competitor analysis plan with screen-by-screen breakdowns |
+| [README.md](../README.md) | Project overview — "Competitor research" phase is summarised in the Development Process table |

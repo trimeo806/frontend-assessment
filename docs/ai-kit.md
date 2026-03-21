@@ -313,3 +313,14 @@ In short: **skills teach**, **agents act**.
 ```
 
 Each agent runs in isolation — it cannot see what the other agents produced unless the orchestrator explicitly provides that output as input context. This isolation is the feature: it prevents the "tunnel vision" that occurs when one context holds both the implementation decisions and the review responsibility.
+
+---
+
+## Related Documents
+
+| Document | Relationship |
+| --- | --- |
+| [docs/ai-tools.md](./ai-tools.md) | Higher-level view of AI usage — where AI helped most, concrete code examples, and where human judgment was applied |
+| [docs/workflow.md](./workflow.md) | The 10-phase project process that this agent system executed — shows which agent ran at which phase |
+| [docs/architecture.md](./architecture.md) | The architectural output produced by `frontend-architect` agent during Phase 6 |
+| [plans/260315-1200-flight-booking-app/frontend/implementation-plans/00-architecture.md](../plans/260315-1200-flight-booking-app/frontend/implementation-plans/00-architecture.md) | The original architecture planning artifact — produced by the `frontend-architect` agent |

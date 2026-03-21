@@ -421,3 +421,15 @@ src/
 │   └── zh.json
 └── navigation.ts
 ```
+
+---
+
+## Related Documents
+
+| Document | Relationship |
+| --- | --- |
+| [docs/workflow.md](./workflow.md) | The 10-phase process that produced these decisions — Phase 6 (Architecture Gate) is where this document was locked |
+| [docs/ai-tools.md](./ai-tools.md) | How AI helped with specific architectural calls: Server Actions vs Route Handlers, `useHydrated()`, sessionStorage vs localStorage |
+| [docs/competitive-research.md](./competitive-research.md) | The design system tokens (colors, spacing, component sizes) were sourced from the 7-OTA competitor analysis |
+| [plans/…/00-architecture.md](../plans/260315-1200-flight-booking-app/frontend/implementation-plans/00-architecture.md) | The original pre-implementation planning artifact that this document was built from |
+| [README.md](../README.md) | Project setup, feature list, and deployment guide |

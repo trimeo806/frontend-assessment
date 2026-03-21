@@ -236,3 +236,16 @@ See [competitive-research.md](./competitive-research.md) for the full analysis.
 3. **Live API testing is non-negotiable** — `return_offers=false` requirement was only discoverable through live testing, not documentation. The TypeScript types were more accurate from live responses than from docs.
 
 4. **Competitor research influences concrete decisions** — the decision to use Skyscanner's color system (`#0770E3`), card sizing (52px inputs), and filter panel placement came directly from 7-OTA research, not from default choices.
+
+---
+
+## Related Documents
+
+| Document | Relationship |
+| --- | --- |
+| [docs/architecture.md](./architecture.md) | The locked output of Phase 6 — the architecture document that guided all of Phase 7 implementation |
+| [docs/competitive-research.md](./competitive-research.md) | The full output of Phase 2 — 7-OTA analysis with scored comparison and design decisions |
+| [docs/ai-tools.md](./ai-tools.md) | How AI tools were applied in each phase — which agent ran when and what it produced |
+| [plans/260315-1200-flight-booking-app/frontend/implementation-plans/](../plans/260315-1200-flight-booking-app/frontend/implementation-plans/) | 12 implementation plan files produced in Phase 5 — the working documents that Phase 7 built from |
+| [plans/260320-gap-resolution/plan.md](../plans/260320-gap-resolution/plan.md) | Post-build gap audit conducted after Phase 10 — 7 gaps identified and tracked to resolution |
+| [README.md](../README.md) | Project overview with the Development Process summary table |

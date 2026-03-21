@@ -13,6 +13,7 @@ This directory contains all technical and process documentation for the SkyBook 
 | [competitive-research.md](./competitive-research.md) | **Competitor analysis** — 7 OTAs studied (Google Flights, Skyscanner, Expedia, AirAsia, Booking.com, Kayak, Trip.com), why Skyscanner was selected as the primary design reference, patterns adopted and avoided  |
 | [ai-tools.md](./ai-tools.md)              | **AI tools & usage** — how Claude Code and the tri_ai_kit multi-agent system were used, which agent handled which phase, where AI helped most (concrete examples), and where human judgment was applied                    |
 | [ai-kit.md](./ai-kit.md)                  | **AI kit internals** — skills vs agents (the distinction), every skill and agent used in this project, what each one produced, concrete findings, and the agent interaction map                                            |
+| [../plans/](../plans/)                    | **Implementation plans** — 12 planning artefacts produced during Phases 5–6 (research, implementation, and gap resolution)                                                                                                |
 
 ---
 
@@ -20,8 +21,10 @@ This directory contains all technical and process documentation for the SkyBook 
 
 - **Steps I went through (10-phase process)** → [README.md § Development Process](../README.md#development-process) · [docs/workflow.md](./workflow.md)
 - **Running the project locally** → [README.md](../README.md)
-- **Architecture decisions** → [docs/architecture.md](./architecture.md)
+- **High-level architecture hub** → [ARCHITECTURE.md](../ARCHITECTURE.md)
+- **Architecture decisions (full detail)** → [docs/architecture.md](./architecture.md)
 - **Competitor UX research** → [docs/competitive-research.md](./competitive-research.md)
 - **AI tools used** → [docs/ai-tools.md](./ai-tools.md)
 - **AI kit internals (skills & agents)** → [docs/ai-kit.md](./ai-kit.md)
 - **Development workflow (full detail)** → [docs/workflow.md](./workflow.md)
+- **Implementation plans (12 files)** → [plans/](../plans/)
