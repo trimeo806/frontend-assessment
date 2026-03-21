@@ -71,6 +71,42 @@ https://flight-explorer-twenty-six.vercel.app/en
 
 6. Open http://localhost:3000 in your browser.
 
+## Development Process
+
+The project was built in 10 phases across four groups. Full details in [docs/workflow.md](./docs/workflow.md).
+
+### Research (Phases 1–4)
+
+| Step | Phase | What happened |
+| ---- | ----- | -------------- |
+| 1 | **Brainstorm** | Read the assessment in full; decomposed into 4 screens, API calls, docs, and deployment deliverables |
+| 2 | **Competitor research** | Tested 7 OTA platforms (Google Flights, Skyscanner, Expedia, Kayak, AirAsia, Booking.com, Trip.com); selected Skyscanner as the primary design reference |
+| 3 | **Tech stack research** | Compared Zustand vs Redux, RHF vs Formik, shadcn/ui vs MUI; each choice documented with rationale |
+| 4 | **API research** | Live-tested all 6 Duffel endpoints; discovered `return_offers=false` requirement and `passengerIds[]` constraint from real responses |
+
+### Planning (Phases 5–6)
+
+| Step | Phase | What happened |
+| ---- | ----- | -------------- |
+| 5 | **Plan** | Wrote 12 implementation plan files covering architecture, tokens, data layer, route guards, forms, animations, and responsive layout |
+| 6 | **Architecture gate** | `frontend-architect` agent reviewed and locked the component split; TanStack Query removed; `useHydrated()` pattern added |
+
+### Build (Phases 7–8)
+
+| Step | Phase | What happened |
+| ---- | ----- | -------------- |
+| 7 | **Implement** | Built all 4 screens in dependency order: Foundation → Search → Results → Passengers → Confirmation → Shared; 40+ components, 3 Server Actions, 2 Route Handlers |
+| 8 | **Code review** | `code-reviewer` agent audited TypeScript strictness, accessibility (ARIA, keyboard nav, contrast), and code quality; all issues resolved before testing |
+
+### Verify & Ship (Phases 9–10)
+
+| Step | Phase | What happened |
+| ---- | ----- | -------------- |
+| 9 | **Test & fix** | End-to-end booking flow tested in browser with live Duffel test API; fixed 3 bugs (import paths, round-trip grid, Zustand hydration flash) |
+| 10 | **Deploy** | Connected repo to Vercel, set `DUFFEL_API_KEY` env var, verified live URL end-to-end |
+
+---
+
 ## Documentation
 
 Full technical and process documentation is in the [`docs/`](./docs/) directory:

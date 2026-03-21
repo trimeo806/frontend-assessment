@@ -18,9 +18,10 @@ This directory contains all technical and process documentation for the SkyBook 
 
 ## Quick Navigation
 
+- **Steps I went through (10-phase process)** → [README.md § Development Process](../README.md#development-process) · [docs/workflow.md](./workflow.md)
 - **Running the project locally** → [README.md](../README.md)
 - **Architecture decisions** → [docs/architecture.md](./architecture.md)
 - **Competitor UX research** → [docs/competitive-research.md](./competitive-research.md)
 - **AI tools used** → [docs/ai-tools.md](./ai-tools.md)
 - **AI kit internals (skills & agents)** → [docs/ai-kit.md](./ai-kit.md)
-- **Development workflow** → [docs/workflow.md](./workflow.md)
+- **Development workflow (full detail)** → [docs/workflow.md](./workflow.md)
